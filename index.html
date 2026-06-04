@@ -7,9 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=simple-logo" />
+    <link rel="stylesheet" href="./styles.css?v=tegy-ux" />
     <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script defer src="./app.js?v=simple-logo"></script>
+    <script defer src="./app.js?v=tegy-ux"></script>
   </head>
   <body>
     <section class="desktop-only-gate" aria-label="Desktop required">
@@ -393,6 +393,7 @@
               </div>
               <button class="primary-button"><i data-lucide="file-output"></i> Open Artifact</button>
             </div>
+            <dl class="artifact-meta" id="artifactMeta"></dl>
             <p id="artifactDescription">Compare strategic options, clarify tradeoffs, and choose a path with more confidence.</p>
           </article>
         </section>
@@ -414,23 +415,45 @@
               <span>Pending</span>
               <strong>ABM tier-1 named list</strong>
               <p>Founder validation required before per-target assets.</p>
+              <dl class="decision-meta">
+                <div><dt>Role</dt><dd>Founder</dd></div>
+                <div><dt>Trace</dt><dd>GTM Strategy -> launch checklist</dd></div>
+                <div><dt>Consumed by</dt><dd>Outbound asset run</dd></div>
+              </dl>
               <button class="lock-decision">Lock</button>
             </article>
             <article class="decision-card pending">
               <span>Pending</span>
               <strong>Creator-economy validation priority</strong>
               <p>Validate with 5-10 interviews before major creator-channel investment.</p>
+              <dl class="decision-meta">
+                <div><dt>Role</dt><dd>Product owner</dd></div>
+                <div><dt>Trace</dt><dd>Product Management -> roadmap rationale</dd></div>
+                <div><dt>Consumed by</dt><dd>Activation roadmap</dd></div>
+              </dl>
               <button class="lock-decision">Lock</button>
             </article>
             <article class="decision-card locked">
               <span>Locked</span>
               <strong>GTM motion</strong>
               <p>PLG primary with AI-agent-led activation layer.</p>
+              <dl class="decision-meta">
+                <div><dt>Role</dt><dd>Founder</dd></div>
+                <div><dt>Trace</dt><dd>Copilot -> GTM Strategy</dd></div>
+                <div><dt>Consumed by</dt><dd>GTM launch checklist</dd></div>
+                <div><dt>Lock method</dt><dd>Founder review</dd></div>
+              </dl>
             </article>
             <article class="decision-card default">
               <span>Default</span>
               <strong>PostHog analytics</strong>
               <p>Low-stakes vendor default; revisit only if instrumentation needs shift.</p>
+              <dl class="decision-meta">
+                <div><dt>Role</dt><dd>Ops</dd></div>
+                <div><dt>Trace</dt><dd>Default-OK</dd></div>
+                <div><dt>Consumed by</dt><dd>Instrumentation plan</dd></div>
+                <div><dt>Revisit</dt><dd>Usage limits change</dd></div>
+              </dl>
             </article>
           </section>
         </section>
@@ -463,7 +486,7 @@
                 </div>
                 <p class="api-muted">In your agent terminal, run:</p>
                 <div class="command-box">
-                  <code id="setupCommand">claude "set up https://tegy.io/SKILL.md"</code>
+                  <code id="setupCommand">npx --yes --package=https://strategy-platform-4.cluster-9.deploy.emergentcf.cloud/api/packages/tegy-skill.tgz tegy-skill add</code>
                   <button class="copy-button" type="button" data-copy-target="setupCommand"><i data-lucide="copy"></i> Copy</button>
                 </div>
               </div>
@@ -500,7 +523,7 @@
               <div class="api-card-body">
                 <p class="api-muted">Paste this when you want the agent to use project context instead of opening the web app.</p>
                 <div class="command-box">
-                  <code id="runCommand">claude "Use Tegy on this repo. Read the active project context, vault, decision log, and artifacts, then draft the next decision-ready output."</code>
+                  <code id="runCommand">claude "Use Tegy. Read the selected project context, sources, decision log, and artifacts, then route through the right StrategyOS lane before drafting the next output."</code>
                   <button class="copy-button" type="button" data-copy-target="runCommand"><i data-lucide="copy"></i> Copy</button>
                 </div>
               </div>

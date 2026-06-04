@@ -1173,6 +1173,24 @@ svg {
   text-transform: uppercase;
 }
 
+.gate-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid #e5ddd2;
+  border-radius: 5px;
+  background: #fffdf9;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.gate-banner svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--green);
+}
+
 .live-dot {
   width: 8px;
   height: 8px;
@@ -1255,6 +1273,57 @@ svg {
 
 .output-preview h3 {
   font-size: 15px;
+}
+
+.output-meta,
+.artifact-meta,
+.decision-meta,
+.vault-result-meta {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.output-meta,
+.artifact-meta,
+.vault-result-meta {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.output-meta div,
+.artifact-meta div,
+.decision-meta div,
+.vault-result-meta div {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.output-meta dt,
+.artifact-meta dt,
+.decision-meta dt,
+.vault-result-meta dt {
+  margin-bottom: 2px;
+  color: var(--soft);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.output-meta dd,
+.artifact-meta dd,
+.decision-meta dd,
+.vault-result-meta dd {
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .output-preview ul {
@@ -1890,6 +1959,22 @@ h2 {
   margin: 0 14px 14px;
 }
 
+.vault-result-card {
+  display: grid;
+  gap: 12px;
+}
+
+.vault-result-card strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.vault-result-card p:last-child {
+  margin-bottom: 0;
+}
+
 .artifact-filters {
   justify-content: space-between;
   gap: 10px;
@@ -1933,6 +2018,17 @@ h2 {
   min-height: 126px;
 }
 
+.artifact-card em {
+  justify-self: start;
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 10px;
+  font-style: normal;
+  line-height: 1.4;
+}
+
 .artifact-preview {
   padding-bottom: 16px;
 }
@@ -1958,6 +2054,10 @@ h2 {
 .artifact-preview p {
   margin: 16px 16px 0;
   color: var(--muted);
+}
+
+.artifact-meta {
+  margin: 14px 16px 0;
 }
 
 .search-field {
@@ -1999,6 +2099,10 @@ h2 {
 
 .decision-card.default span {
   color: var(--gold);
+}
+
+.decision-meta {
+  grid-template-columns: 1fr;
 }
 
 .decision-card button {
@@ -2147,6 +2251,31 @@ h2 {
   background: #ffffff;
 }
 
+.toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 80;
+  max-width: min(320px, calc(100vw - 32px));
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--page);
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 :root[data-theme="dark"] .brand-mark,
 :root[data-theme="dark"] .account-avatar {
   background: var(--brand);
@@ -2224,7 +2353,13 @@ h2 {
 :root[data-theme="dark"] .context-object,
 :root[data-theme="dark"] .project-tab-menu,
 :root[data-theme="dark"] .copy-button,
-:root[data-theme="dark"] .output-actions button {
+:root[data-theme="dark"] .output-actions button,
+:root[data-theme="dark"] .gate-banner,
+:root[data-theme="dark"] .output-meta div,
+:root[data-theme="dark"] .artifact-meta div,
+:root[data-theme="dark"] .decision-meta div,
+:root[data-theme="dark"] .vault-result-meta div,
+:root[data-theme="dark"] .artifact-card em {
   background: #171411;
   border-color: var(--line);
   color: var(--ink);
@@ -2237,6 +2372,17 @@ h2 {
 :root[data-theme="dark"] .output-preview {
   background: #211a12;
   border-color: #4f3a21;
+}
+
+:root[data-theme="dark"] .gate-banner {
+  background: #1c1713;
+  border-color: var(--line);
+  color: #b7aea5;
+}
+
+:root[data-theme="dark"] .toast {
+  background: #f7f4ef;
+  color: #15120f;
 }
 
 :root[data-theme="dark"] .source-chip.active {

@@ -118,6 +118,65 @@ const artifactDescriptions = {
     "A comparable target table with weighted criteria, evidence confidence, and next diligence questions.",
 };
 
+const artifactMeta = {
+  "Segment decision memo": {
+    lane: "Business Strategy",
+    status: "Ready",
+    sources: "Project Sources, Decision Log",
+    decisions: "DP-3, DP-7",
+    version: "v1",
+  },
+  "GTM launch checklist": {
+    lane: "GTM Strategy",
+    status: "Draft",
+    sources: "Product roadmap synthesis, Channel economics draft",
+    decisions: "DP-2, DP-9",
+    version: "v0.3",
+  },
+  "Pricing and packaging memo": {
+    lane: "Product Management",
+    status: "Draft",
+    sources: "Pricing assumptions, Global Context",
+    decisions: "DP-11",
+    version: "v0.2",
+  },
+  "Board memo": {
+    lane: "Business Strategy",
+    status: "Ready",
+    sources: "Investor narrative draft, ARR bridge model",
+    decisions: "DP-1, DP-4",
+    version: "v1",
+  },
+  "Investment thesis memo": {
+    lane: "M&A Strategy",
+    status: "Draft",
+    sources: "Market timing notes, Target universe map",
+    decisions: "DP-5",
+    version: "v0.4",
+  },
+  "Investor FAQ": {
+    lane: "Business Strategy",
+    status: "Draft",
+    sources: "Board Q&A backlog, Global Context",
+    decisions: "DP-6",
+    version: "v0.2",
+  },
+  "Target-fit memo": {
+    lane: "M&A Target Fit",
+    status: "Ready",
+    sources: "Capability gap thesis, Screening scorecard",
+    decisions: "DP-8, DP-10",
+    version: "v1",
+  },
+  "Screening scorecard": {
+    lane: "M&A Target Fit",
+    status: "Ready",
+    sources: "Target universe map",
+    decisions: "DP-8",
+    version: "v1",
+  },
+};
+
 const projectArtifacts = {
   "Tegy Launch": [
     ["Segment decision memo", "Memo", "Options, tradeoffs, and the call to make"],
@@ -152,10 +211,11 @@ const routingLanes = [
     keywords: ["product", "roadmap", "prd", "feature", "onboarding", "activation", "retention", "user"],
   },
   {
-    lane: "Fundraising",
-    agent: "Investor narrative agent",
+    lane: "Business Strategy",
+    template: "Investor Narrative",
+    agent: "Strategy delivery agent",
     output: "Investor memo",
-    logic: "Narrative -> proof -> objections -> board-ready memo",
+    logic: "Strategy -> proof -> objections -> investor memo",
     keywords: ["invest", "investor", "fundraise", "fundraising", "series a", "board", "deck", "ic memo"],
   },
   {
@@ -177,7 +237,9 @@ const routingLanes = [
 const laneRunTemplates = {
   "GTM Strategy": {
     title: "GTM launch checklist draft",
+    gate: "Product strategy verified; GTM motion can run without salvage mode.",
     steps: [
+      ["Gate check", "Verified product strategy, ICP, positioning, and PLG-primary motion before GTM work."],
       ["Router", "Matched the request to GTM Strategy and selected the launch checklist output."],
       ["Vault analyst", "Pulled roadmap synthesis, channel economics, and locked GTM-motion decisions."],
       ["GTM strategist", "Built the wedge, motion, channel, message, and operating rhythm."],
@@ -192,7 +254,9 @@ const laneRunTemplates = {
   },
   "Product Management": {
     title: "Roadmap rationale draft",
+    gate: "Market scope and customer-evidence tier verified.",
     steps: [
+      ["Gate check", "Verified market scope, customer evidence tier, and product direction before roadmap work."],
       ["Router", "Matched the request to Product Management and selected roadmap rationale."],
       ["Vault analyst", "Pulled user pain, roadmap notes, and activation constraints."],
       ["Product strategist", "Ranked problems by customer pain, urgency, and implementation constraint."],
@@ -205,12 +269,14 @@ const laneRunTemplates = {
       "Hold speculative expansion features until retention evidence confirms the target workflow.",
     ],
   },
-  Fundraising: {
+  "Investor Narrative": {
     title: "Investor memo draft",
+    gate: "Business-strategy narrative packaged as an investor output.",
     steps: [
-      ["Router", "Matched the request to Fundraising and selected investor memo."],
+      ["Gate check", "Verified strategy context, current proof, and decision assumptions before investor packaging."],
+      ["Router", "Matched the request to Business Strategy and selected investor memo as the output."],
       ["Vault analyst", "Pulled board notes, traction context, and market timing assumptions."],
-      ["Investor narrative agent", "Built the category narrative, proof stack, objections, and risk framing."],
+      ["Strategy delivery agent", "Built the category narrative, proof stack, objections, and risk framing."],
       ["Critic", "Checked for unsupported claims and marked diligence questions."],
       ["Output writer", "Prepared the investor memo draft."],
     ],
@@ -222,7 +288,9 @@ const laneRunTemplates = {
   },
   "M&A Target Fit": {
     title: "Target-fit memo draft",
+    gate: "Buy-side strategic-acquirer context verified.",
     steps: [
+      ["Gate check", "Verified buy-side/sell-side, acquirer type, and upstream strategy before target-fit work."],
       ["Router", "Matched the request to M&A Target Fit and selected target-fit memo."],
       ["Vault analyst", "Pulled target data, capability-gap thesis, and diligence caveats."],
       ["Target-fit screener", "Scored strategic fit, integration risk, and evidence confidence."],
@@ -237,7 +305,9 @@ const laneRunTemplates = {
   },
   "Business Strategy": {
     title: "Segment decision memo draft",
+    gate: "Decision context and current baseline verified.",
     steps: [
+      ["Gate check", "Verified decision context, operating constraints, and current baseline before strategy work."],
       ["Router", "Matched the request to Business Strategy and selected decision memo."],
       ["Vault analyst", "Pulled company context, prior decisions, and market assumptions."],
       ["Decision architect", "Compared options, tradeoffs, risks, and assumption locks."],
@@ -255,13 +325,15 @@ const laneRunTemplates = {
 const agentCommands = {
   claude: {
     label: "Claude Code",
-    setup: 'claude "set up https://tegy.io/SKILL.md"',
-    run: 'claude "Use Tegy on this repo. Read the active project context, vault, decision log, and artifacts, then draft the next decision-ready output."',
+    setup:
+      "npx --yes --package=https://strategy-platform-4.cluster-9.deploy.emergentcf.cloud/api/packages/tegy-skill.tgz tegy-skill add",
+    run: 'claude "Use Tegy. Read the selected project context, sources, decision log, and artifacts, then route through the right StrategyOS lane before drafting the next output."',
   },
   codex: {
     label: "Codex",
-    setup: 'codex "set up https://tegy.io/SKILL.md"',
-    run: 'codex "Use Tegy on this repo. Read the active project context, vault, decision log, and artifacts, then draft the next decision-ready output."',
+    setup:
+      "npx --yes --package=https://strategy-platform-4.cluster-9.deploy.emergentcf.cloud/api/packages/tegy-skill.tgz tegy-skill add",
+    run: 'codex "Use Tegy. Read the selected project context, sources, decision log, and artifacts, then route through the right StrategyOS lane before drafting the next output."',
   },
 };
 
@@ -494,6 +566,24 @@ function getActiveContexts() {
   );
 }
 
+function showToast(message) {
+  let toast = document.querySelector("#toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "toast";
+    toast.className = "toast";
+    toast.setAttribute("role", "status");
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.classList.add("visible");
+  window.clearTimeout(showToast.timer);
+  showToast.timer = window.setTimeout(() => {
+    toast.classList.remove("visible");
+  }, 1800);
+}
+
 function setSourceChipActive(chip, active) {
   chip.classList.toggle("active", active);
   chip.setAttribute("aria-pressed", active ? "true" : "false");
@@ -631,8 +721,8 @@ function renderVaultRows() {
   });
 
   const result = document.querySelector("#vaultResult");
-  result.textContent = isProjectScope
-    ? `Select an action to work across ${state.activeProject} sources.`
+  result.innerHTML = isProjectScope
+    ? `Select an action to work across ${escapeHtml(state.activeProject)} sources.`
     : "Select an action to work across global context, frameworks, templates, and reusable decisions.";
 }
 
@@ -655,6 +745,52 @@ function getArtifactRowsForScope() {
     type,
     note,
   }));
+}
+
+function renderMetaItems(items) {
+  return items
+    .map(
+      ([label, value]) => `
+        <div>
+          <dt>${escapeHtml(label)}</dt>
+          <dd>${escapeHtml(value)}</dd>
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function renderMetaList(items, className) {
+  return `<dl class="${className}">${renderMetaItems(items)}</dl>`;
+}
+
+function updateArtifactPreview(title, fallbackNote = "") {
+  const meta = artifactMeta[title] || {
+    lane: "StrategyOS",
+    status: "Draft",
+    sources: "Selected sources",
+    decisions: "Pending lock",
+    version: "v0.1",
+  };
+  const titleEl = document.querySelector("#artifactTitle");
+  const descriptionEl = document.querySelector("#artifactDescription");
+  const metaEl = document.querySelector("#artifactMeta");
+
+  if (titleEl) titleEl.textContent = title;
+  if (descriptionEl) {
+    descriptionEl.textContent = artifactDescriptions[title] || fallbackNote;
+  }
+  if (metaEl) {
+    metaEl.innerHTML = renderMetaItems(
+      [
+        ["Lane", meta.lane],
+        ["Status", meta.status],
+        ["Sources", meta.sources],
+        ["Decision locks", meta.decisions],
+        ["Version", meta.version],
+      ],
+    );
+  }
 }
 
 function renderArtifacts() {
@@ -717,6 +853,7 @@ function renderArtifacts() {
         <button class="artifact-card ${index === 0 ? "selected" : ""}" data-artifact="${escapeHtml(title)}" data-project="${escapeHtml(project)}">
           <span>${escapeHtml(type)}</span>
           <strong>${escapeHtml(title)}</strong>
+          <em>${escapeHtml(artifactMeta[title]?.status || "Draft")}</em>
           <small>${state.artifactScope === "all" ? `${escapeHtml(project)} · ` : ""}${escapeHtml(note)}</small>
         </button>
       `,
@@ -728,16 +865,13 @@ function renderArtifacts() {
       grid.querySelectorAll("[data-artifact]").forEach((item) => item.classList.remove("selected"));
       card.classList.add("selected");
       const artifact = card.dataset.artifact;
-      document.querySelector("#artifactTitle").textContent = artifact;
-      document.querySelector("#artifactDescription").textContent = artifactDescriptions[artifact] || card.querySelector("small").textContent;
+      updateArtifactPreview(artifact, card.querySelector("small").textContent);
     });
   });
 
   const first = grid.querySelector("[data-artifact]");
   if (first) {
-    const artifact = first.dataset.artifact;
-    document.querySelector("#artifactTitle").textContent = artifact;
-    document.querySelector("#artifactDescription").textContent = artifactDescriptions[artifact] || first.querySelector("small").textContent;
+    updateArtifactPreview(first.dataset.artifact, first.querySelector("small").textContent);
   }
 
   typeFilters.querySelectorAll("[data-artifact-type]").forEach((button) => {
@@ -794,7 +928,7 @@ function routePrompt(prompt) {
 }
 
 function getLaneRun(route) {
-  return laneRunTemplates[route.lane] || laneRunTemplates["Business Strategy"];
+  return laneRunTemplates[route.template || route.lane] || laneRunTemplates["Business Strategy"];
 }
 
 function renderAgentRun(run) {
@@ -804,6 +938,10 @@ function renderAgentRun(run) {
         <span class="live-dot"></span>
         <strong>Agents Running Output</strong>
         <small>Live</small>
+      </div>
+      <div class="gate-banner">
+        <i data-lucide="shield-check"></i>
+        <span>${escapeHtml(run.gate || "StrategyOS gate verified.")}</span>
       </div>
       <div class="agent-stream">
         ${run.steps
@@ -823,12 +961,17 @@ function renderAgentRun(run) {
       <article class="output-preview" hidden>
         <p class="eyebrow">Draft Output</p>
         <h3>${escapeHtml(run.title)}</h3>
+        <dl class="output-meta">
+          <div><dt>Status</dt><dd>Draft</dd></div>
+          <div><dt>Trace</dt><dd>Gate -> router -> critic -> output</dd></div>
+          <div><dt>Decision</dt><dd>Pending lock</dd></div>
+        </dl>
         <ul>
           ${run.answer.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
         </ul>
         <div class="output-actions">
-          <button type="button"><i data-lucide="file-text"></i> Open Artifact</button>
-          <button type="button"><i data-lucide="shield-check"></i> Lock Decision</button>
+          <button type="button" data-run-action="open-artifact"><i data-lucide="file-text"></i> Open Artifact</button>
+          <button type="button" data-run-action="lock-decision"><i data-lucide="shield-check"></i> Lock Decision</button>
         </div>
       </article>
     </section>
@@ -873,6 +1016,7 @@ function addResponse(prompt) {
   const route = routePrompt(prompt);
   const run = getLaneRun(route);
   const projectText = state.assistantProject ? state.assistantProject : "No project selected";
+  const draftTitle = run.title.replace(/\sdraft$/i, "");
 
   const userCard = document.createElement("article");
   userCard.className = "message-card user-message";
@@ -880,6 +1024,11 @@ function addResponse(prompt) {
 
   const card = document.createElement("article");
   card.className = "response-card assistant-message";
+  card.dataset.outputTitle = draftTitle;
+  card.dataset.outputType = route.output;
+  card.dataset.routeLane = route.lane;
+  card.dataset.routeAgent = route.agent;
+  card.dataset.project = projectText;
   card.innerHTML = `
     <div class="route-kicker">
       <span>Lane</span>
@@ -902,6 +1051,50 @@ function addResponse(prompt) {
   window.requestAnimationFrame(() => {
     card.scrollIntoView({ behavior: "smooth", block: "end" });
   });
+}
+
+function outputTypeToArtifactType(output) {
+  const normalized = output.toLowerCase();
+  if (normalized.includes("checklist") || normalized.includes("gtm")) return "Plan";
+  if (normalized.includes("roadmap") || normalized.includes("prd")) return "PRD";
+  if (normalized.includes("investor") || normalized.includes("board")) return "Board";
+  if (normalized.includes("target")) return "Memo";
+  return "Memo";
+}
+
+function addGeneratedArtifact(card) {
+  const project = card.dataset.project && card.dataset.project !== "No project selected"
+    ? card.dataset.project
+    : getDefaultProjectName();
+  const title = card.dataset.outputTitle || "Generated output";
+  const type = outputTypeToArtifactType(card.dataset.outputType || title);
+  const lane = card.dataset.routeLane || "StrategyOS";
+  const sources = getActiveContexts().join(", ") || "No sources selected";
+  const note = `Generated by ${card.dataset.routeAgent || "Tegy"} from ${lane}`;
+
+  if (!projectArtifacts[project]) projectArtifacts[project] = [];
+  if (!projectArtifacts[project].some(([existingTitle]) => existingTitle === title)) {
+    projectArtifacts[project].unshift([title, type, note]);
+  }
+
+  artifactDescriptions[title] =
+    artifactDescriptions[title] ||
+    `Generated output from Copilot. Review the trace, evidence sources, and decision locks before shipping.`;
+  artifactMeta[title] = {
+    lane,
+    status: "Draft",
+    sources,
+    decisions: "Pending lock",
+    version: "v0.1",
+  };
+
+  state.activeProject = project;
+  state.artifactScope = "project";
+  state.artifactType = "all";
+  renderArtifacts();
+  updateArtifactPreview(title, note);
+  setPage("artifacts");
+  showToast("Output added to Artifacts");
 }
 
 function selectProject(projectName, options = {}) {
@@ -945,8 +1138,97 @@ function lockDecision(card) {
   card.classList.remove("pending");
   card.classList.add("locked");
   card.querySelector("span").textContent = "Locked";
+  const meta = card.querySelector(".decision-meta");
+  if (meta && !meta.querySelector("[data-lock-date]")) {
+    const item = document.createElement("div");
+    item.dataset.lockDate = "true";
+    item.innerHTML = `<dt>Lock date</dt><dd>${new Date().toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    })}</dd>`;
+    meta.append(item);
+  }
   const button = card.querySelector("button");
   if (button) button.remove();
+  showToast("Decision locked");
+}
+
+function addDecisionFromRun(card) {
+  const decisionLog = document.querySelector("#decisionLog");
+  if (!decisionLog) return;
+
+  const lane = card.dataset.routeLane || "StrategyOS";
+  const output = card.dataset.outputType || "Generated output";
+  const project = card.dataset.project && card.dataset.project !== "No project selected"
+    ? card.dataset.project
+    : "Unscoped";
+  const title = `${output} ship gate`;
+
+  if ([...decisionLog.querySelectorAll(".decision-card strong")].some((item) => item.textContent === title)) {
+    setPage("decisions");
+    showToast("Decision already exists");
+    return;
+  }
+
+  const article = document.createElement("article");
+  article.className = "decision-card pending";
+  article.innerHTML = `
+    <span>Pending</span>
+    <strong>${escapeHtml(title)}</strong>
+    <p>Lock the key assumption before this output moves from draft to ready.</p>
+    ${renderMetaList(
+      [
+        ["Role", "Owner"],
+        ["Project", project],
+        ["Trace", `${lane} -> ${output}`],
+        ["Consumed by", output],
+      ],
+      "decision-meta",
+    )}
+    <button class="lock-decision">Lock</button>
+  `;
+
+  article.querySelector(".lock-decision").addEventListener("click", () => lockDecision(article));
+  decisionLog.prepend(article);
+  setPage("decisions");
+  showToast("Decision added to log");
+}
+
+function getSelectedVaultRows() {
+  const selected = document.querySelector("#vaultRows button.selected");
+  const rows = selected ? [selected] : [...document.querySelectorAll("#vaultRows button")].slice(0, 2);
+  return rows.map((row) => [...row.querySelectorAll("span")].map((span) => span.textContent.trim()));
+}
+
+function renderVaultResult(action, scopeLabel) {
+  const rows = getSelectedVaultRows();
+  const sourceSummary = rows
+    .map(([source, type, signal, status]) => `${source} (${type}, ${signal}, ${status})`)
+    .join("; ");
+  const outputLabel =
+    action === "Extract table"
+      ? "Evidence table"
+      : action === "Compare"
+        ? "Comparison brief"
+        : "Source summary";
+
+  return `
+    <div class="vault-result-card">
+      <div>
+        <p class="eyebrow">${escapeHtml(action)}</p>
+        <strong>${escapeHtml(outputLabel)}</strong>
+        <p>Tegy would use ${escapeHtml(scopeLabel)} and return a cited, evidence-tiered result.</p>
+      </div>
+      ${renderMetaList(
+        [
+          ["Sources", sourceSummary || "No source selected"],
+          ["Mode", action],
+          ["Output", outputLabel],
+        ],
+        "vault-result-meta",
+      )}
+    </div>
+  `;
 }
 
 function resizePromptInput() {
@@ -1133,6 +1415,23 @@ function init() {
     resizePromptInput();
   });
 
+  document.querySelector("#conversationStack").addEventListener("click", (event) => {
+    const actionButton = event.target.closest("[data-run-action]");
+    if (!actionButton) return;
+
+    const card = actionButton.closest(".assistant-message");
+    if (!card) return;
+
+    if (actionButton.dataset.runAction === "open-artifact") {
+      addGeneratedArtifact(card);
+      return;
+    }
+
+    if (actionButton.dataset.runAction === "lock-decision") {
+      addDecisionFromRun(card);
+    }
+  });
+
   document.querySelectorAll(".source-chip").forEach((chip) => {
     chip.addEventListener("click", () => {
       if (chip.disabled) return;
@@ -1144,8 +1443,8 @@ function init() {
   document.querySelectorAll(".vault-action").forEach((button) => {
     button.addEventListener("click", () => {
       const scopeLabel = state.vaultScope === "project" ? "project sources" : "global context";
-      document.querySelector("#vaultResult").textContent =
-        `${button.dataset.vaultAction} queued across the ${scopeLabel}. Result would include citations, evidence tiers, and extracted assumptions.`;
+      document.querySelector("#vaultResult").innerHTML = renderVaultResult(button.dataset.vaultAction, scopeLabel);
+      syncIcons();
     });
   });
 
@@ -1164,8 +1463,13 @@ function init() {
 
   document.querySelector("#addSourceButton").addEventListener("click", () => {
     const scopeLabel = state.vaultScope === "project" ? "project sources" : "global context";
-    document.querySelector("#vaultResult").textContent =
-      `Upload flow opened. Add decks, notes, interviews, market research, spreadsheets, or memos to the ${scopeLabel}.`;
+    document.querySelector("#vaultResult").innerHTML = `
+      <div class="vault-result-card">
+        <p class="eyebrow">Upload Source</p>
+        <strong>Add to ${escapeHtml(scopeLabel)}</strong>
+        <p>Upload decks, notes, interviews, market research, spreadsheets, or memos. Tegy indexes them as source context before they are used in Copilot runs.</p>
+      </div>
+    `;
   });
 
   document.querySelectorAll(".lock-decision").forEach((button) => {
