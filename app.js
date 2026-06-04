@@ -5,10 +5,13 @@ const state = {
   vaultScope: "global",
   artifactScope: "all",
   artifactType: "all",
+  artifactPage: 1,
   selectedArtifactTitle: "Segment decision memo",
   selectedArtifactProject: "Tegy Launch",
   chatStarted: false,
 };
+
+const artifactPageSize = 6;
 
 const defaultPromptPlaceholder =
   "Ask Tegy to size a market, pressure-test a GTM motion, draft a PRD, or screen an acquisition...";
@@ -1283,7 +1286,20 @@ function renderArtifacts() {
   const rows = filteredRows.length ? filteredRows : scopeRows;
   const grid = document.querySelector("#artifactGrid");
   const typeFilters = document.querySelector("#artifactTypeFilters");
+  const pagination = document.querySelector("#artifactPagination");
   if (!grid || !typeFilters) return;
+  const totalPages = Math.max(1, Math.ceil(rows.length / artifactPageSize));
+  state.artifactPage = Math.min(Math.max(state.artifactPage, 1), totalPages);
+  const pageStart = (state.artifactPage - 1) * artifactPageSize;
+  const visibleRows = rows.slice(pageStart, pageStart + artifactPageSize);
+  const hasSelectedVisible = visibleRows.some(
+    (row) => row.title === state.selectedArtifactTitle && row.project === state.selectedArtifactProject,
+  );
+  const selectedRow = hasSelectedVisible ? null : visibleRows[0];
+  const isSelectedRow = (row) =>
+    selectedRow
+      ? selectedRow.title === row.title && selectedRow.project === row.project
+      : state.selectedArtifactTitle === row.title && state.selectedArtifactProject === row.project;
 
   document.querySelector("#artifactSubtitle").textContent =
     state.artifactScope === "project"
@@ -1305,6 +1321,7 @@ function renderArtifacts() {
       button.addEventListener("click", () => {
         state.artifactScope = "project";
         state.artifactType = "all";
+        state.artifactPage = 1;
         setProjectTabMenu("#artifactProjectMenu", "#artifactProjectTab", false);
         selectProject(button.dataset.artifactProject, { scopeAssistant: false });
         renderArtifacts();
@@ -1323,10 +1340,10 @@ function renderArtifacts() {
     })
     .join("");
 
-  grid.innerHTML = rows
+  grid.innerHTML = visibleRows
     .map(
-      ({ project, title, type, note }, index) => `
-        <button class="artifact-card ${index === 0 ? "selected" : ""}" data-artifact="${escapeHtml(title)}" data-project="${escapeHtml(project)}">
+      ({ project, title, type, note }) => `
+        <button class="artifact-card ${isSelectedRow({ project, title }) ? "selected" : ""}" data-artifact="${escapeHtml(title)}" data-project="${escapeHtml(project)}">
           <span>${escapeHtml(type)}</span>
           <strong>${escapeHtml(title)}</strong>
           <em>${escapeHtml(artifactMeta[title]?.status || "Draft")}</em>
@@ -1335,6 +1352,21 @@ function renderArtifacts() {
       `,
     )
     .join("");
+
+  if (pagination) {
+    pagination.innerHTML =
+      totalPages > 1
+        ? `
+          <button class="pager-button" type="button" data-artifact-page="prev" ${state.artifactPage === 1 ? "disabled" : ""} aria-label="Previous artifact page">
+            <i data-lucide="chevron-left"></i>
+          </button>
+          <span>Page ${state.artifactPage} of ${totalPages}</span>
+          <button class="pager-button" type="button" data-artifact-page="next" ${state.artifactPage === totalPages ? "disabled" : ""} aria-label="Next artifact page">
+            <i data-lucide="chevron-right"></i>
+          </button>
+        `
+        : "";
+  }
 
   grid.querySelectorAll("[data-artifact]").forEach((card) => {
     card.addEventListener("click", () => {
@@ -1346,18 +1378,28 @@ function renderArtifacts() {
     });
   });
 
-  const first = grid.querySelector("[data-artifact]");
-  if (first) {
-    state.selectedArtifactProject = first.dataset.project;
-    updateArtifactPreview(first.dataset.artifact, first.querySelector("small").textContent);
+  const selected = grid.querySelector(".artifact-card.selected") || grid.querySelector("[data-artifact]");
+  if (selected) {
+    state.selectedArtifactProject = selected.dataset.project;
+    updateArtifactPreview(selected.dataset.artifact, selected.querySelector("small").textContent);
   }
 
   typeFilters.querySelectorAll("[data-artifact-type]").forEach((button) => {
     button.addEventListener("click", () => {
       state.artifactType = button.dataset.artifactType;
+      state.artifactPage = 1;
       renderArtifacts();
     });
   });
+
+  pagination?.querySelectorAll("[data-artifact-page]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.artifactPage += button.dataset.artifactPage === "next" ? 1 : -1;
+      renderArtifacts();
+    });
+  });
+
+  syncIcons();
 }
 
 function setLanePicker(open) {
@@ -1569,6 +1611,7 @@ function addGeneratedArtifact(card) {
   state.activeProject = project;
   state.artifactScope = "project";
   state.artifactType = "all";
+  state.artifactPage = 1;
   renderArtifacts();
   openArtifact(title, project, note);
   showToast("Output opened as Artifact");
@@ -1608,6 +1651,7 @@ function selectProject(projectName, options = {}) {
   }
   renderAssistantScope();
   if (state.vaultScope === "project") renderVaultRows();
+  if (state.artifactScope === "project") state.artifactPage = 1;
   renderArtifacts();
 }
 
@@ -1836,6 +1880,7 @@ function init() {
 
   document.querySelector("#artifactProjectTab").addEventListener("click", () => {
     state.artifactScope = "project";
+    state.artifactPage = 1;
     renderArtifacts();
     const menu = document.querySelector("#artifactProjectMenu");
     setProjectTabMenu("#artifactProjectMenu", "#artifactProjectTab", menu.hidden);
@@ -1990,6 +2035,7 @@ function init() {
     button.addEventListener("click", () => {
       state.artifactScope = button.dataset.artifactScope;
       state.artifactType = "all";
+      state.artifactPage = 1;
       setProjectTabMenu("#artifactProjectMenu", "#artifactProjectTab", false);
       renderArtifacts();
     });

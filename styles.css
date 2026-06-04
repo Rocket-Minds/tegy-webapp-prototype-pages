@@ -2012,6 +2012,47 @@ h2 {
   margin-bottom: 14px;
 }
 
+.artifact-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 34px;
+  margin: -2px 0 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.artifact-pagination:empty {
+  display: none;
+}
+
+.pager-button {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--page);
+  color: var(--ink);
+}
+
+.pager-button:hover:not(:disabled) {
+  background: var(--hover);
+  border-color: var(--line-strong);
+}
+
+.pager-button:disabled {
+  cursor: default;
+  opacity: 0.42;
+}
+
+.pager-button svg {
+  width: 15px;
+  height: 15px;
+}
+
 .artifact-card,
 .library-grid article,
 .decision-card {
