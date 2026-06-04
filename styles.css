@@ -1415,7 +1415,7 @@ svg {
 }
 
 .page:not(#assistantPage) {
-  padding: 28px 34px 36px;
+  padding: 20px 34px 36px;
 }
 
 .page-header {
