@@ -7,9 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=tegy-ux" />
+    <link rel="stylesheet" href="./styles.css?v=artifact-page" />
     <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script defer src="./app.js?v=tegy-ux"></script>
+    <script defer src="./app.js?v=artifact-page"></script>
   </head>
   <body>
     <section class="desktop-only-gate" aria-label="Desktop required">
@@ -391,11 +391,60 @@
                 <p class="eyebrow">Preview</p>
                 <h2 id="artifactTitle">Segment decision memo</h2>
               </div>
-              <button class="primary-button"><i data-lucide="file-output"></i> Open Artifact</button>
+              <button class="primary-button" id="openArtifactButton" type="button"><i data-lucide="file-output"></i> Open Artifact</button>
             </div>
             <dl class="artifact-meta" id="artifactMeta"></dl>
             <p id="artifactDescription">Compare strategic options, clarify tradeoffs, and choose a path with more confidence.</p>
           </article>
+        </section>
+
+        <section class="page" id="artifactDetailPage" data-page="artifact-detail">
+          <header class="page-header">
+            <div class="page-heading">
+              <button class="text-button back-button" id="artifactBackButton" type="button">
+                <i data-lucide="arrow-left"></i> Outputs
+              </button>
+              <div class="page-title-row artifact-title-row">
+                <i data-lucide="file-output"></i>
+                <h1 id="artifactDetailTitle">Segment decision memo</h1>
+              </div>
+              <p class="page-subtitle" id="artifactDetailSubtitle">Tegy Launch · Business Strategy · Ready</p>
+            </div>
+            <div class="header-actions">
+              <button class="secondary-button" id="copyArtifactButton" type="button"><i data-lucide="copy"></i> Copy Markdown</button>
+              <button class="primary-button" id="artifactLockButton" type="button"><i data-lucide="shield-check"></i> Add Decision Lock</button>
+            </div>
+          </header>
+
+          <section class="artifact-reader">
+            <aside class="panel artifact-sidecar">
+              <div class="artifact-sidecar-block">
+                <p class="eyebrow">Artifact State</p>
+                <dl class="artifact-meta compact" id="artifactDetailMeta"></dl>
+              </div>
+              <div class="artifact-sidecar-block">
+                <p class="eyebrow">Source Context</p>
+                <ul class="source-reference-list" id="artifactDetailSources"></ul>
+              </div>
+              <div class="artifact-sidecar-block">
+                <p class="eyebrow">Trace</p>
+                <ol class="artifact-trace-list">
+                  <li>Gate verified</li>
+                  <li>Lane routed</li>
+                  <li>Critic pass</li>
+                  <li>Output drafted</li>
+                </ol>
+              </div>
+            </aside>
+
+            <article class="panel artifact-document">
+              <div class="artifact-document-header">
+                <span>Generated Artifact</span>
+                <strong>StrategyOS-style output view</strong>
+              </div>
+              <div class="artifact-document-body" id="artifactDetailSections"></div>
+            </article>
+          </section>
         </section>
 
         <section class="page" id="decisionsPage" data-page="decisions">

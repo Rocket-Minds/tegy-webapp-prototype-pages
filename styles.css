@@ -2060,6 +2060,120 @@ h2 {
   margin: 14px 16px 0;
 }
 
+.back-button {
+  justify-content: flex-start;
+  min-height: 24px;
+  margin: 0 0 8px;
+  padding: 0;
+  color: var(--muted);
+}
+
+.back-button:hover {
+  color: var(--ink);
+}
+
+.artifact-title-row {
+  align-items: flex-start;
+}
+
+.artifact-reader {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.artifact-sidecar {
+  display: grid;
+  gap: 0;
+}
+
+.artifact-sidecar-block {
+  display: grid;
+  gap: 10px;
+  padding: 15px;
+  border-bottom: 1px solid var(--line);
+}
+
+.artifact-sidecar-block:last-child {
+  border-bottom: 0;
+}
+
+.artifact-meta.compact {
+  grid-template-columns: 1fr;
+  margin: 0;
+}
+
+.source-reference-list,
+.artifact-trace-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.source-reference-list li,
+.artifact-trace-list li {
+  padding-left: 2px;
+}
+
+.artifact-document {
+  overflow: hidden;
+}
+
+.artifact-document-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.artifact-document-header span {
+  color: var(--brand);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.artifact-document-header strong {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.artifact-document-body {
+  display: grid;
+  gap: 0;
+}
+
+.artifact-doc-section {
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.artifact-doc-section:last-child {
+  border-bottom: 0;
+}
+
+.artifact-doc-section h2 {
+  max-width: 720px;
+  margin-bottom: 10px;
+  font-size: 24px;
+  line-height: 1.18;
+}
+
+.artifact-doc-section p:last-child {
+  max-width: 760px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
 .search-field {
   display: flex;
   align-items: center;
@@ -2309,6 +2423,12 @@ h2 {
   box-shadow: var(--shadow);
 }
 
+:root[data-theme="dark"] .artifact-document-header,
+:root[data-theme="dark"] .artifact-sidecar-block,
+:root[data-theme="dark"] .artifact-doc-section {
+  border-color: var(--line);
+}
+
 :root[data-theme="dark"] .lane-picker button,
 :root[data-theme="dark"] .workflow-card,
 :root[data-theme="dark"] .source-chip:not(.active),
@@ -2489,6 +2609,10 @@ h2 {
   .library-grid,
   .decision-log {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .artifact-reader {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -3153,6 +3277,19 @@ h2 {
 
   .artifact-preview p {
     margin: 13px 13px 0;
+  }
+
+  .artifact-doc-section {
+    padding: 18px 16px;
+  }
+
+  .artifact-doc-section h2 {
+    font-size: 19px;
+  }
+
+  .artifact-document-header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .api-layout {

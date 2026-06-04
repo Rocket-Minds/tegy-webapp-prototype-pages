@@ -5,6 +5,8 @@ const state = {
   vaultScope: "global",
   artifactScope: "all",
   artifactType: "all",
+  selectedArtifactTitle: "Segment decision memo",
+  selectedArtifactProject: "Tegy Launch",
   chatStarted: false,
 };
 
@@ -175,6 +177,89 @@ const artifactMeta = {
     decisions: "DP-8",
     version: "v1",
   },
+};
+
+const artifactSections = {
+  "Segment decision memo": [
+    {
+      eyebrow: "Decision",
+      title: "Choose the PLG-primary GTM motion for v1.",
+      body:
+        "Use founder-led proof and product-led activation as the primary motion. Keep sales-assisted work out of v1 until activation behavior is visible.",
+    },
+    {
+      eyebrow: "Why now",
+      title: "The wedge is narrow enough to test without building a full GTM machine.",
+      body:
+        "The current context supports a focused ICP and a 90-day operating window. The output should clarify tradeoffs, not create a broad channel plan.",
+    },
+    {
+      eyebrow: "Open lock",
+      title: "ABM named-list validation remains the ship gate.",
+      body:
+        "Do not generate per-target assets until the founder validates the named list and the decision log records the lock value.",
+    },
+  ],
+  "GTM launch checklist": [
+    {
+      eyebrow: "Gate",
+      title: "Product strategy is upstream-verified before GTM execution.",
+      body:
+        "The checklist starts only after ICP, positioning, and PLG-primary motion are treated as source context rather than invented in the GTM lane.",
+    },
+    {
+      eyebrow: "Sequence",
+      title: "Wedge -> motion -> channel -> operating rhythm.",
+      body:
+        "Run one launch loop: pick the segment, confirm the activation motion, choose the first channel, then assign weekly operating cadence.",
+    },
+    {
+      eyebrow: "Decision",
+      title: "Hold target-specific assets until ABM list lock.",
+      body:
+        "The asset builder should wait for a locked named-list decision before producing personalized outbound or landing-page variants.",
+    },
+  ],
+  "Roadmap rationale": [
+    {
+      eyebrow: "Product call",
+      title: "Prioritize activation clarity before feature breadth.",
+      body:
+        "The roadmap should reduce uncertainty around the first successful workflow before expanding into speculative adjacent use cases.",
+    },
+    {
+      eyebrow: "Evidence tier",
+      title: "Observed behavior outranks interview-only preference.",
+      body:
+        "Use instrumentation and retention signals as the primary evidence tier; interviews explain observed behavior but should not replace it.",
+    },
+    {
+      eyebrow: "Output",
+      title: "Convert rationale into PRD-ready sections.",
+      body:
+        "Each feature bet should carry customer pain, constraint, decision owner, confidence, and revisit trigger.",
+    },
+  ],
+  "Investor memo": [
+    {
+      eyebrow: "Narrative",
+      title: "Lead with strategy and proof, not fundraising mechanics.",
+      body:
+        "The memo should package the business-strategy narrative for investors while separating proven traction from assumptions.",
+    },
+    {
+      eyebrow: "Objections",
+      title: "Make diligence questions visible instead of hiding them.",
+      body:
+        "The strongest investor artifact names the unresolved questions and shows how management will resolve them.",
+    },
+    {
+      eyebrow: "Delivery",
+      title: "Use one shared spine across memo, deck, and talking points.",
+      body:
+        "The same decision narrative should drive the board memo, investor FAQ, and meeting script.",
+    },
+  ],
 };
 
 const projectArtifacts = {
@@ -775,6 +860,7 @@ function updateArtifactPreview(title, fallbackNote = "") {
   const titleEl = document.querySelector("#artifactTitle");
   const descriptionEl = document.querySelector("#artifactDescription");
   const metaEl = document.querySelector("#artifactMeta");
+  state.selectedArtifactTitle = title;
 
   if (titleEl) titleEl.textContent = title;
   if (descriptionEl) {
@@ -791,6 +877,119 @@ function updateArtifactPreview(title, fallbackNote = "") {
       ],
     );
   }
+}
+
+function getArtifactProject(title, preferredProject) {
+  if (preferredProject && projectArtifacts[preferredProject]?.some(([artifactTitle]) => artifactTitle === title)) {
+    return preferredProject;
+  }
+
+  const found = Object.entries(projectArtifacts).find(([, rows]) =>
+    rows.some(([artifactTitle]) => artifactTitle === title),
+  );
+  return found?.[0] || state.activeProject || getDefaultProjectName();
+}
+
+function getArtifactType(title, project) {
+  const row = projectArtifacts[project]?.find(([artifactTitle]) => artifactTitle === title);
+  return row?.[1] || outputTypeToArtifactType(title);
+}
+
+function getArtifactDetail(title, project, fallbackNote = "") {
+  const meta = artifactMeta[title] || {
+    lane: "StrategyOS",
+    status: "Draft",
+    sources: "Selected sources",
+    decisions: "Pending lock",
+    version: "v0.1",
+  };
+  const type = getArtifactType(title, project);
+  const description = artifactDescriptions[title] || fallbackNote || "Generated output from Tegy.";
+  const sections =
+    artifactSections[title] ||
+    [
+      {
+        eyebrow: "Generated Output",
+        title: description,
+        body:
+          "Review the source context, trace, and decision locks before this output moves from draft to ready.",
+      },
+      {
+        eyebrow: "Trace",
+        title: `${meta.lane} produced this ${type.toLowerCase()}.`,
+        body:
+          "The artifact page keeps the readable output separate from the underlying implementation choice: it could be a message, file, record, or derived view.",
+      },
+      {
+        eyebrow: "Next lock",
+        title: meta.decisions,
+        body:
+          "Any pending decision should be locked in the decision lifecycle before the artifact is treated as ship-ready.",
+      },
+    ];
+
+  return { meta, type, description, sections };
+}
+
+function renderArtifactDetail(title, project, fallbackNote = "") {
+  const resolvedProject = getArtifactProject(title, project);
+  const detail = getArtifactDetail(title, resolvedProject, fallbackNote);
+  state.selectedArtifactTitle = title;
+  state.selectedArtifactProject = resolvedProject;
+
+  document.querySelector("#artifactDetailTitle").textContent = title;
+  document.querySelector("#artifactDetailSubtitle").textContent =
+    `${resolvedProject} · ${detail.meta.lane} · ${detail.meta.status}`;
+  document.querySelector("#artifactDetailMeta").innerHTML = renderMetaItems(
+    [
+      ["Project", resolvedProject],
+      ["Type", detail.type],
+      ["Lane", detail.meta.lane],
+      ["Status", detail.meta.status],
+      ["Version", detail.meta.version],
+      ["Decision locks", detail.meta.decisions],
+    ],
+  );
+  document.querySelector("#artifactDetailSources").innerHTML = detail.meta.sources
+    .split(",")
+    .map((source) => `<li>${escapeHtml(source.trim())}</li>`)
+    .join("");
+  document.querySelector("#artifactDetailSections").innerHTML = detail.sections
+    .map(
+      (section) => `
+        <section class="artifact-doc-section">
+          <p class="eyebrow">${escapeHtml(section.eyebrow)}</p>
+          <h2>${escapeHtml(section.title)}</h2>
+          <p>${escapeHtml(section.body)}</p>
+        </section>
+      `,
+    )
+    .join("");
+}
+
+function openArtifact(title, project, fallbackNote = "") {
+  renderArtifactDetail(title, project, fallbackNote);
+  setPage("artifact-detail");
+  syncIcons();
+}
+
+function getArtifactMarkdown(title, project) {
+  const resolvedProject = getArtifactProject(title, project);
+  const detail = getArtifactDetail(title, resolvedProject);
+  const metaLines = [
+    `project: ${resolvedProject}`,
+    `type: ${detail.type}`,
+    `lane: ${detail.meta.lane}`,
+    `status: ${detail.meta.status}`,
+    `version: ${detail.meta.version}`,
+    `sources: ${detail.meta.sources}`,
+    `decision_locks: ${detail.meta.decisions}`,
+  ].join("\n");
+  const body = detail.sections
+    .map((section) => `## ${section.title}\n\n_${section.eyebrow}_\n\n${section.body}`)
+    .join("\n\n");
+
+  return `---\n${metaLines}\n---\n\n# ${title}\n\n${body}\n`;
 }
 
 function renderArtifacts() {
@@ -865,12 +1064,14 @@ function renderArtifacts() {
       grid.querySelectorAll("[data-artifact]").forEach((item) => item.classList.remove("selected"));
       card.classList.add("selected");
       const artifact = card.dataset.artifact;
+      state.selectedArtifactProject = card.dataset.project;
       updateArtifactPreview(artifact, card.querySelector("small").textContent);
     });
   });
 
   const first = grid.querySelector("[data-artifact]");
   if (first) {
+    state.selectedArtifactProject = first.dataset.project;
     updateArtifactPreview(first.dataset.artifact, first.querySelector("small").textContent);
   }
 
@@ -1092,9 +1293,8 @@ function addGeneratedArtifact(card) {
   state.artifactScope = "project";
   state.artifactType = "all";
   renderArtifacts();
-  updateArtifactPreview(title, note);
-  setPage("artifacts");
-  showToast("Output added to Artifacts");
+  openArtifact(title, project, note);
+  showToast("Output opened as Artifact");
 }
 
 function selectProject(projectName, options = {}) {
@@ -1182,6 +1382,45 @@ function addDecisionFromRun(card) {
         ["Project", project],
         ["Trace", `${lane} -> ${output}`],
         ["Consumed by", output],
+      ],
+      "decision-meta",
+    )}
+    <button class="lock-decision">Lock</button>
+  `;
+
+  article.querySelector(".lock-decision").addEventListener("click", () => lockDecision(article));
+  decisionLog.prepend(article);
+  setPage("decisions");
+  showToast("Decision added to log");
+}
+
+function addDecisionFromArtifact() {
+  const decisionLog = document.querySelector("#decisionLog");
+  if (!decisionLog) return;
+
+  const title = state.selectedArtifactTitle;
+  const project = state.selectedArtifactProject || getArtifactProject(title);
+  const detail = getArtifactDetail(title, project);
+  const decisionTitle = `${title} readiness lock`;
+
+  if ([...decisionLog.querySelectorAll(".decision-card strong")].some((item) => item.textContent === decisionTitle)) {
+    setPage("decisions");
+    showToast("Decision already exists");
+    return;
+  }
+
+  const article = document.createElement("article");
+  article.className = "decision-card pending";
+  article.innerHTML = `
+    <span>Pending</span>
+    <strong>${escapeHtml(decisionTitle)}</strong>
+    <p>Confirm the artifact can move from draft to ready with current sources, trace, and decision locks.</p>
+    ${renderMetaList(
+      [
+        ["Role", "Owner"],
+        ["Project", project],
+        ["Trace", `${detail.meta.lane} -> ${title}`],
+        ["Consumed by", title],
       ],
       "decision-meta",
     )}
@@ -1439,6 +1678,23 @@ function init() {
       updateActiveContextScope();
     });
   });
+
+  document.querySelector("#openArtifactButton").addEventListener("click", () => {
+    openArtifact(state.selectedArtifactTitle, state.selectedArtifactProject);
+  });
+
+  document.querySelector("#artifactBackButton").addEventListener("click", () => {
+    setPage("artifacts");
+  });
+
+  document.querySelector("#copyArtifactButton").addEventListener("click", (event) => {
+    copyToClipboard(
+      getArtifactMarkdown(state.selectedArtifactTitle, state.selectedArtifactProject),
+      event.currentTarget,
+    );
+  });
+
+  document.querySelector("#artifactLockButton").addEventListener("click", addDecisionFromArtifact);
 
   document.querySelectorAll(".vault-action").forEach((button) => {
     button.addEventListener("click", () => {
