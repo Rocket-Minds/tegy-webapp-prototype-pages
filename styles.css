@@ -113,8 +113,8 @@ button {
   border-radius: 5px;
   background: #171715;
   color: #ffffff;
-  --tegy-logo-cut: #171715;
   --tegy-logo-accent: var(--brand);
+  --tegy-logo-route-soft: rgba(255, 255, 255, 0.52);
 }
 
 .tegy-logo {
@@ -123,15 +123,17 @@ button {
   overflow: visible;
 }
 
-.tegy-logo-needle {
-  fill: currentColor;
+.tegy-logo-route,
+.tegy-logo-arrow {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
 }
 
-.tegy-logo-cut {
-  fill: none;
-  stroke: var(--tegy-logo-cut);
-  stroke-linecap: round;
-  stroke-width: 1.4;
+.tegy-logo-route.secondary {
+  stroke: var(--tegy-logo-route-soft);
 }
 
 .tegy-logo-core {
@@ -2106,8 +2108,8 @@ h2 {
 }
 
 :root[data-theme="dark"] .brand-mark {
-  --tegy-logo-cut: var(--brand);
   --tegy-logo-accent: #ffffff;
+  --tegy-logo-route-soft: rgba(23, 17, 13, 0.48);
 }
 
 :root[data-theme="dark"] .composer,
