@@ -1481,6 +1481,7 @@ function init() {
   setTheme(getPreferredTheme());
   setSidebarCollapsed(window.localStorage.getItem("tegy-sidebar-collapsed") === "true");
   setProjectsAccordion(window.localStorage.getItem("tegy-projects-open") !== "false");
+  setRecentsOpen(false);
   syncResponsiveNavigation();
 
   document.querySelector("#sidebarToggle").addEventListener("click", () => {
