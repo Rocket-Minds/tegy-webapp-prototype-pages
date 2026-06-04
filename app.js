@@ -676,6 +676,34 @@ function setPage(page) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function openProjectScopedPage(page) {
+  const selectedProject = document.querySelector("#projectDetailTitle")?.textContent.trim();
+  if (projectSummaries[selectedProject]) {
+    selectProject(selectedProject, { scopeAssistant: page === "assistant" });
+  }
+
+  if (page === "assistant") {
+    state.assistantProject = state.activeProject;
+    renderAssistantScope();
+  }
+
+  if (page === "vault") {
+    state.vaultScope = "project";
+    renderVaultRows();
+  }
+
+  if (page === "artifacts") {
+    state.artifactScope = "project";
+    state.artifactType = "all";
+    state.artifactPage = 1;
+    renderArtifacts();
+  }
+
+  setProjectTabMenu("#vaultProjectMenu", "#vaultProjectTab", false);
+  setProjectTabMenu("#artifactProjectMenu", "#artifactProjectTab", false);
+  setPage(page);
+}
+
 function setSidebarCollapsed(collapsed) {
   const shell = document.querySelector(".app-shell");
   const toggle = document.querySelector("#sidebarToggle");
@@ -1919,6 +1947,12 @@ function init() {
   document.querySelectorAll("[data-page-target], [data-page-link]").forEach((button) => {
     button.addEventListener("click", () => {
       const page = button.dataset.pageTarget || button.dataset.pageLink;
+      if (button.closest(".project-detail-panel")) {
+        openProjectScopedPage(page);
+        if (isMobileNav()) setMobileMenu(false);
+        return;
+      }
+
       setPage(page);
       if (isMobileNav()) setMobileMenu(false);
     });
