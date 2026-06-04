@@ -103,7 +103,6 @@ button {
   background: #171715;
   color: #ffffff;
   --tegy-logo-accent: var(--brand);
-  --tegy-logo-route-soft: rgba(255, 255, 255, 0.52);
 }
 
 .desktop-gate-logo .tegy-logo {
@@ -167,7 +166,6 @@ button {
   background: #171715;
   color: #ffffff;
   --tegy-logo-accent: var(--brand);
-  --tegy-logo-route-soft: rgba(255, 255, 255, 0.52);
 }
 
 .tegy-logo {
@@ -176,17 +174,12 @@ button {
   overflow: visible;
 }
 
-.tegy-logo-route,
-.tegy-logo-arrow {
+.tegy-logo-mark {
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 1.5;
-}
-
-.tegy-logo-route.secondary {
-  stroke: var(--tegy-logo-route-soft);
+  stroke-width: 1.8;
 }
 
 .tegy-logo-core {
@@ -2162,7 +2155,6 @@ h2 {
 
 :root[data-theme="dark"] .brand-mark {
   --tegy-logo-accent: #ffffff;
-  --tegy-logo-route-soft: rgba(23, 17, 13, 0.48);
 }
 
 :root[data-theme="dark"] .composer,
@@ -3099,6 +3091,5 @@ h2 {
     background: var(--brand);
     color: #17110d;
     --tegy-logo-accent: #ffffff;
-    --tegy-logo-route-soft: rgba(23, 17, 13, 0.48);
   }
 }
