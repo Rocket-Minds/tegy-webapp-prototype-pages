@@ -81,6 +81,59 @@ button {
   grid-template-columns: 60px minmax(0, 1fr);
 }
 
+.desktop-only-gate {
+  display: none;
+}
+
+.desktop-gate-card {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 420px);
+  padding: 28px 22px;
+  text-align: center;
+}
+
+.desktop-gate-logo {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 18px;
+  border-radius: 9px;
+  background: #171715;
+  color: #ffffff;
+  --tegy-logo-accent: var(--brand);
+  --tegy-logo-route-soft: rgba(255, 255, 255, 0.52);
+}
+
+.desktop-gate-logo .tegy-logo {
+  width: 25px;
+  height: 25px;
+}
+
+.desktop-gate-kicker {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.desktop-gate-card h1 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 31px;
+  line-height: 1.05;
+}
+
+.desktop-gate-card p:last-child {
+  max-width: 340px;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
 .sidebar {
   position: sticky;
   top: 0;
@@ -3015,5 +3068,37 @@ h2 {
   .key-actions .copy-button,
   .command-box .copy-button {
     width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  html,
+  body {
+    min-height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255, 111, 45, 0.08), transparent 34%),
+      var(--page);
+  }
+
+  .app-shell {
+    display: none;
+  }
+
+  .desktop-only-gate {
+    display: grid;
+    place-items: center;
+    min-height: 100svh;
+    padding: 24px;
+  }
+
+  :root[data-theme="dark"] .desktop-gate-logo {
+    background: var(--brand);
+    color: #17110d;
+    --tegy-logo-accent: #ffffff;
+    --tegy-logo-route-soft: rgba(23, 17, 13, 0.48);
   }
 }
