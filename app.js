@@ -183,41 +183,63 @@ const artifactSections = {
   "Segment decision memo": [
     {
       eyebrow: "Decision",
-      title: "Choose the PLG-primary GTM motion for v1.",
+      title: "Choose the PLG-primary wedge, not a broad launch motion.",
       body:
-        "Use founder-led proof and product-led activation as the primary motion. Keep sales-assisted work out of v1 until activation behavior is visible.",
+        "The current evidence supports a narrow founder-led PLG motion. Keep sales-assisted and agency-led outbound as controlled follow-ons until activation behavior is visible.",
+      table: [
+        ["Option", "Why it wins", "Risk", "Call"],
+        ["PLG primary", "Fastest path to usage proof", "Needs clean activation metric", "Ship"],
+        ["Sales-assisted", "Useful for named targets", "Premature before ICP lock", "Hold"],
+        ["Agency outbound", "Scales distribution", "Creates noise before message lock", "Gate"],
+      ],
     },
     {
-      eyebrow: "Why now",
-      title: "The wedge is narrow enough to test without building a full GTM machine.",
-      body:
-        "The current context supports a focused ICP and a 90-day operating window. The output should clarify tradeoffs, not create a broad channel plan.",
+      eyebrow: "Locks",
+      title: "Three decisions need to travel with downstream outputs.",
+      bullets: [
+        "DP-3: ICP stays founder-led operators until first activation cohort proves otherwise.",
+        "DP-7: Activation means saved or reused output, not just generated content.",
+        "DP-9: Named-list assets wait for founder validation of the first ABM target set.",
+      ],
     },
     {
-      eyebrow: "Open lock",
-      title: "ABM named-list validation remains the ship gate.",
+      eyebrow: "Next action",
+      title: "Convert this into one GTM launch checklist and one board-ready rationale.",
       body:
-        "Do not generate per-target assets until the founder validates the named list and the decision log records the lock value.",
+        "The memo is ready for execution only after the decision log records who owns the activation threshold and when the motion gets revisited.",
+      callout: "Verdict: Ready with one open ship gate on named-list validation.",
     },
   ],
   "GTM launch checklist": [
     {
       eyebrow: "Gate",
-      title: "Product strategy is upstream-verified before GTM execution.",
+      title: "Revise before demand-gen execution.",
       body:
-        "The checklist starts only after ICP, positioning, and PLG-primary motion are treated as source context rather than invented in the GTM lane.",
+        "Tegy routes this through the GTM Strategy lane after product strategy, ICP, and PLG-primary motion are present as context. Execution can start after four fixes are applied.",
+      table: [
+        ["Fix", "Owner", "When", "Ship impact"],
+        ["Activation metric", "Product", "Week 0", "Prevents vanity success"],
+        ["Founder time cap", "Founder", "Week 0", "Keeps cadence realistic"],
+        ["5-10 interviews", "Founder", "Weeks 1-2", "Validates creator-fit risk"],
+        ["ABM list gate", "Founder", "Week 0", "Blocks premature assets"],
+      ],
     },
     {
       eyebrow: "Sequence",
       title: "Wedge -> motion -> channel -> operating rhythm.",
-      body:
-        "Run one launch loop: pick the segment, confirm the activation motion, choose the first channel, then assign weekly operating cadence.",
+      bullets: [
+        "Wedge: founder-led operators with immediate strategy-output pain.",
+        "Motion: PLG first, assisted by founder proof and source-gated examples.",
+        "Channel: founder network first, LinkedIn second, Reddit/community third.",
+        "Operating rhythm: Week 4 and Week 8 actual-vs-plan reviews before any channel expansion.",
+      ],
     },
     {
-      eyebrow: "Decision",
-      title: "Hold target-specific assets until ABM list lock.",
+      eyebrow: "Output",
+      title: "First 90 days should test conversion-rate viability, not revenue scale.",
       body:
-        "The asset builder should wait for a locked named-list decision before producing personalized outbound or landing-page variants.",
+        "The checklist should keep launch learning tight: activation, conversion, source quality, and repeat output use. Revenue-scale is a later proof point.",
+      callout: "Next lock: founder validates the ABM tier-1 named list before per-target collateral is generated.",
     },
   ],
   "Roadmap rationale": [
@@ -225,19 +247,29 @@ const artifactSections = {
       eyebrow: "Product call",
       title: "Prioritize activation clarity before feature breadth.",
       body:
-        "The roadmap should reduce uncertainty around the first successful workflow before expanding into speculative adjacent use cases.",
+        "The roadmap should reduce uncertainty around the first successful workflow before expanding into adjacent use cases. This follows the product lane's pain -> constraint -> priority -> PRD sequence.",
+      table: [
+        ["Priority", "Why", "Evidence", "Decision"],
+        ["Activation instrumentation", "Defines real value", "Roadmap notes + decision log", "Build first"],
+        ["Project-scoped context", "Makes outputs reusable", "Vault usage pattern", "Build"],
+        ["Template breadth", "Increases surface area", "Low direct evidence", "Defer"],
+      ],
     },
     {
       eyebrow: "Evidence tier",
       title: "Observed behavior outranks interview-only preference.",
-      body:
-        "Use instrumentation and retention signals as the primary evidence tier; interviews explain observed behavior but should not replace it.",
+      bullets: [
+        "Treat saved output, reused source context, and reopened artifacts as stronger evidence than chat volume.",
+        "Use interviews to explain behavior, not to replace behavior.",
+        "Every roadmap item should name the decision it is trying to unlock.",
+      ],
     },
     {
       eyebrow: "Output",
       title: "Convert rationale into PRD-ready sections.",
       body:
         "Each feature bet should carry customer pain, constraint, decision owner, confidence, and revisit trigger.",
+      callout: "Verdict: Build activation clarity and project context before adding more output templates.",
     },
   ],
   "Investor memo": [
@@ -245,19 +277,211 @@ const artifactSections = {
       eyebrow: "Narrative",
       title: "Lead with strategy and proof, not fundraising mechanics.",
       body:
-        "The memo should package the business-strategy narrative for investors while separating proven traction from assumptions.",
+        "This is a Business Strategy output packaged for investor consumption. It should separate the durable thesis from the fundraise mechanics and keep assumptions visible.",
+      table: [
+        ["Narrative block", "Role in memo", "Evidence state", "Owner"],
+        ["Market timing", "Why now", "Medium", "Founder"],
+        ["Right to win", "Why this team", "Medium-low", "Founder"],
+        ["Proof stack", "Why believe", "Medium", "Product/GTM"],
+        ["Use of capital", "What changes", "Draft", "Founder"],
+      ],
     },
     {
       eyebrow: "Objections",
       title: "Make diligence questions visible instead of hiding them.",
-      body:
-        "The strongest investor artifact names the unresolved questions and shows how management will resolve them.",
+      bullets: [
+        "Is this a product, a service wrapper, or a workflow system?",
+        "Which signal proves repeat use beyond founder novelty?",
+        "What breaks if PLG activation is lower than expected?",
+      ],
     },
     {
       eyebrow: "Delivery",
       title: "Use one shared spine across memo, deck, and talking points.",
       body:
         "The same decision narrative should drive the board memo, investor FAQ, and meeting script.",
+      callout: "Next lock: decide whether this memo is for board alignment, investor outreach, or IC-style diligence.",
+    },
+  ],
+  "Pricing and packaging memo": [
+    {
+      eyebrow: "Pricing call",
+      title: "Keep the first package simple enough to test value capture.",
+      body:
+        "The product lane should not overfit packaging before activation and repeat-use behavior are visible. Use a simple subscription spine with explicit usage guardrails.",
+      table: [
+        ["Package", "Buyer job", "Why", "Risk"],
+        ["Free teaser", "Taste the workflow", "Reduces adoption friction", "Can under-signal willingness to pay"],
+        ["Pro", "Use Tegy repeatedly", "Matches AI-seat mental model", "Needs clear included usage"],
+        ["Enterprise waitlist", "Capture pull", "Avoids v1 sales complexity", "Manual follow-up burden"],
+      ],
+    },
+    {
+      eyebrow: "Assumptions",
+      title: "Token, seat, and overage choices are product decisions with engineering input.",
+      bullets: [
+        "Do not make pricing depend on a hidden technical architecture choice.",
+        "Show bundle limits in user language, not provider-cost language.",
+        "Use telemetry to revisit whether package shape matches actual output creation.",
+      ],
+    },
+    {
+      eyebrow: "Next lock",
+      title: "Lock the free-to-pro conversion event before copy or checkout work.",
+      body:
+        "The main open decision is what user behavior earns the upgrade prompt: output saved, output reused, source uploaded, or decision locked.",
+      callout: "Verdict: Draft until bundle sizing and upgrade-trigger policy are confirmed.",
+    },
+  ],
+  "Board memo": [
+    {
+      eyebrow: "Board ask",
+      title: "Approve the 90-day launch with two explicit gates.",
+      body:
+        "The board memo should convert strategy analysis into a decision. The ask is not to approve every downstream asset; it is to approve the learning plan and the gate discipline.",
+      table: [
+        ["Gate", "Decision required", "Timing", "If failed"],
+        ["Activation", "Saved or reused output threshold", "Day 30", "Revise product workflow"],
+        ["GTM", "Named ICP and channel signal", "Day 60", "Re-cut wedge"],
+        ["Resourcing", "Founder time cap realistic", "Week 4", "Descope channels"],
+      ],
+    },
+    {
+      eyebrow: "Risks",
+      title: "The risks are execution-sequence risks, not existential strategy risks.",
+      bullets: [
+        "Founder time can cap demand generation before message quality is proven.",
+        "Broad GTM assets can create false confidence before the named list is locked.",
+        "Investor narrative can overstate evidence if assumptions are not labeled.",
+      ],
+    },
+    {
+      eyebrow: "Decision",
+      title: "Ship the learning system, not a polished campaign.",
+      body:
+        "The strongest board call is a controlled launch with visible decision locks, source trace, and revisit points.",
+      callout: "Next lock: board approves the launch gates and the owner for each revisit trigger.",
+    },
+  ],
+  "Investment thesis memo": [
+    {
+      eyebrow: "Thesis",
+      title: "Pursue the narrow strategic wedge, not category sprawl.",
+      body:
+        "The M&A Strategy lane frames this as an IC-style thesis: target the capability gap that improves the core motion, avoid broad market adjacency until diligence proves strategic control.",
+      table: [
+        ["Thesis pillar", "Current read", "Evidence", "Confidence"],
+        ["Market timing", "Demand forming around AI-assisted strategy work", "Market timing notes", "Medium"],
+        ["Right to win", "Workflow rigor and decision discipline are differentiators", "Source context + prior outputs", "Medium"],
+        ["Target logic", "Acquire capability that closes distribution or workflow gap", "Target universe map", "Medium-low"],
+        ["Diligence gap", "Retention and integration evidence still thin", "Screening scorecard", "Low"],
+      ],
+    },
+    {
+      eyebrow: "IC risks",
+      title: "The memo should make the bear case investable.",
+      bullets: [
+        "If repeat output use is weak, the acquisition thesis becomes services-heavy.",
+        "If target data is not comparable, the scorecard can imply precision that is not real.",
+        "If the wedge is too broad, integration energy will dilute the core product motion.",
+      ],
+    },
+    {
+      eyebrow: "Recommendation",
+      title: "Advance only targets that improve the locked strategic motion.",
+      body:
+        "A target is worth diligence if it strengthens the locked wedge, accelerates distribution, or closes a capability gap without forcing a new strategy.",
+      callout: "Verdict: Draft. Advance to ready after the target-fit scorecard and decision log agree on the pursue/pass threshold.",
+    },
+  ],
+  "Investor FAQ": [
+    {
+      eyebrow: "Likely objection",
+      title: "Is Tegy a product, a services wrapper, or a strategy operating system?",
+      body:
+        "The answer should be direct: Tegy is a project-based AI workbench that routes source-grounded strategy work through reusable StrategyOS lanes and returns governed outputs.",
+      table: [
+        ["Objection", "Short answer", "Evidence needed"],
+        ["Product or service?", "Product workflow with expert lane logic", "Activation and repeat-use data"],
+        ["Why now?", "AI work needs governance and decision memory", "Source reuse + decision logs"],
+        ["Moat?", "Rigor, workflows, and accumulated context", "Output quality over multiple projects"],
+      ],
+    },
+    {
+      eyebrow: "Answer bank",
+      title: "Keep answers concise and evidence-labeled.",
+      bullets: [
+        "Use 'we know' only for observed product behavior or locked decisions.",
+        "Use 'we believe' for market claims still relying on founder pattern matching.",
+        "Use 'we are testing' for pricing, segment, and channel claims.",
+      ],
+    },
+    {
+      eyebrow: "Follow-up",
+      title: "Route unanswered objections back into source collection.",
+      body:
+        "Each unanswered investor question should become a source request, decision lock, or artifact update instead of living only in the chat thread.",
+      callout: "Next lock: decide which three objections must be proven before the next investor meeting.",
+    },
+  ],
+  "Target-fit memo": [
+    {
+      eyebrow: "Recommendation",
+      title: "Pursue only targets that close the locked capability gap.",
+      body:
+        "The M&A Target Fit lane should keep target screening anchored to the strategic matter. A target does not win because it is interesting; it wins because it tightens the chosen motion.",
+      table: [
+        ["Target archetype", "Strategic fit", "Risk", "Call"],
+        ["Workflow data layer", "Improves source memory", "Integration complexity", "Advance"],
+        ["Agency services shop", "Adds distribution", "Services drag", "Hold"],
+        ["Template marketplace", "Adds breadth", "Weak defensibility", "Pass"],
+      ],
+    },
+    {
+      eyebrow: "Diligence locks",
+      title: "Do not move to outreach before three locks are clear.",
+      bullets: [
+        "DP-8: The target must map to a specific capability gap.",
+        "DP-10: Integration risk must be visible in the scorecard.",
+        "DP-12: The pursue/pass threshold must be agreed before reviewing new targets.",
+      ],
+    },
+    {
+      eyebrow: "Next action",
+      title: "Turn the memo into a comparable screen, not a narrative-only opinion.",
+      body:
+        "The next useful output is a screening scorecard with weighted criteria, confidence, and source trace.",
+      callout: "Verdict: Ready when the scorecard confirms fit on capability, timing, and integration risk.",
+    },
+  ],
+  "Screening scorecard": [
+    {
+      eyebrow: "Scorecard",
+      title: "Rank by strategic fit first, ease second.",
+      body:
+        "The screen should compare targets against the chosen thesis and expose evidence quality. Ease of acquisition matters only after strategic fit clears the threshold.",
+      table: [
+        ["Target", "Fit", "Evidence", "Call"],
+        ["Workflow data layer", "High", "Capability gap thesis + source map", "Advance"],
+        ["Vertical research library", "Medium", "Market notes", "Hold"],
+        ["Services-enabled agency", "Low-medium", "Interview notes", "Pass"],
+      ],
+    },
+    {
+      eyebrow: "Interpretation",
+      title: "Scores should explain what to learn next.",
+      bullets: [
+        "A high score creates a diligence question, not an automatic acquisition recommendation.",
+        "A medium score needs one specific evidence request before it can be revisited.",
+        "A pass should name which strategic assumption failed.",
+      ],
+    },
+    {
+      eyebrow: "Output",
+      title: "Move advanced targets into the target-fit memo.",
+      body:
+        "The scorecard is the comparison view. The target-fit memo is the recommendation view. Keep them linked but not duplicated.",
+      callout: "Next lock: agree on the minimum score and evidence threshold for outreach.",
     },
   ],
 };
@@ -931,6 +1155,49 @@ function getArtifactDetail(title, project, fallbackNote = "") {
   return { meta, type, description, sections };
 }
 
+function renderArtifactTable(table) {
+  if (!Array.isArray(table) || !table.length) return "";
+  return `
+    <div class="artifact-mini-table" role="table">
+      ${table
+        .map(
+          (row, index) => `
+            <div class="artifact-table-row ${index === 0 ? "is-head" : ""}" role="row" style="--artifact-table-columns: ${row.length}">
+              ${row.map((cell) => `<span role="cell">${escapeHtml(cell)}</span>`).join("")}
+            </div>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderArtifactSection(section) {
+  const body = section.body ? `<p class="artifact-section-body">${escapeHtml(section.body)}</p>` : "";
+  const bullets = Array.isArray(section.bullets) && section.bullets.length
+    ? `
+      <ul class="artifact-bullets">
+        ${section.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+      </ul>
+    `
+    : "";
+  const table = renderArtifactTable(section.table);
+  const callout = section.callout
+    ? `<p class="artifact-callout">${escapeHtml(section.callout)}</p>`
+    : "";
+
+  return `
+    <section class="artifact-doc-section">
+      <p class="eyebrow">${escapeHtml(section.eyebrow)}</p>
+      <h2>${escapeHtml(section.title)}</h2>
+      ${body}
+      ${table}
+      ${bullets}
+      ${callout}
+    </section>
+  `;
+}
+
 function renderArtifactDetail(title, project, fallbackNote = "") {
   const resolvedProject = getArtifactProject(title, project);
   const detail = getArtifactDetail(title, resolvedProject, fallbackNote);
@@ -955,15 +1222,7 @@ function renderArtifactDetail(title, project, fallbackNote = "") {
     .map((source) => `<li>${escapeHtml(source.trim())}</li>`)
     .join("");
   document.querySelector("#artifactDetailSections").innerHTML = detail.sections
-    .map(
-      (section) => `
-        <section class="artifact-doc-section">
-          <p class="eyebrow">${escapeHtml(section.eyebrow)}</p>
-          <h2>${escapeHtml(section.title)}</h2>
-          <p>${escapeHtml(section.body)}</p>
-        </section>
-      `,
-    )
+    .map((section) => renderArtifactSection(section))
     .join("");
 }
 
@@ -986,10 +1245,28 @@ function getArtifactMarkdown(title, project) {
     `decision_locks: ${detail.meta.decisions}`,
   ].join("\n");
   const body = detail.sections
-    .map((section) => `## ${section.title}\n\n_${section.eyebrow}_\n\n${section.body}`)
+    .map((section) => sectionToMarkdown(section))
     .join("\n\n");
 
   return `---\n${metaLines}\n---\n\n# ${title}\n\n${body}\n`;
+}
+
+function tableToMarkdown(table) {
+  if (!Array.isArray(table) || !table.length) return "";
+  const [header, ...rows] = table;
+  const separator = header.map(() => "---");
+  return [header, separator, ...rows]
+    .map((row) => `| ${row.map((cell) => String(cell).replace(/\|/g, "\\|")).join(" | ")} |`)
+    .join("\n");
+}
+
+function sectionToMarkdown(section) {
+  const parts = [`## ${section.title}`, `_${section.eyebrow}_`];
+  if (section.body) parts.push(section.body);
+  if (section.table) parts.push(tableToMarkdown(section.table));
+  if (section.bullets) parts.push(section.bullets.map((item) => `- ${item}`).join("\n"));
+  if (section.callout) parts.push(`> ${section.callout}`);
+  return parts.filter(Boolean).join("\n\n");
 }
 
 function renderArtifacts() {
