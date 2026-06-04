@@ -665,6 +665,7 @@ svg {
   min-width: 0;
   min-height: 100vh;
   background: var(--page);
+  font-size: 14px;
 }
 
 .page {
