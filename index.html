@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tegy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css?v=strategy-logo" />
+    <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script defer src="./app.js?v=strategy-logo"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Tegy navigation">
+        <div class="brand-row">
+          <div class="brand-mark" role="img" aria-label="Tegy logo">
+            <svg class="tegy-logo" viewBox="0 0 18 18" aria-hidden="true" focusable="false">
+              <path class="tegy-logo-needle" d="M9 2.7 13.8 14 9 11.7 4.2 14 9 2.7Z" />
+              <path class="tegy-logo-cut" d="M9 4.5v7.1" />
+              <circle class="tegy-logo-core" cx="9" cy="11.7" r="1.25" />
+            </svg>
+          </div>
+          <div>
+            <strong>Tegy</strong>
+          </div>
+          <button class="icon-button sidebar-toggle" id="sidebarToggle" aria-label="Collapse sidebar" title="Collapse sidebar" aria-expanded="true">
+            <i data-lucide="panel-left-close"></i>
+          </button>
+        </div>
+
+        <nav class="nav-list" aria-label="Primary sections">
+          <button class="nav-item active" data-page-target="assistant">
+            <i data-lucide="message-square"></i>
+            <span>Copilot</span>
+          </button>
+          <div class="nav-projects-group projects-open" id="projectsNavGroup">
+            <div class="nav-project-row">
+              <button class="nav-item nav-project-link" data-page-target="projects">
+                <i data-lucide="briefcase-business"></i>
+                <span>Projects</span>
+              </button>
+              <button class="project-accordion-toggle" id="projectsAccordionToggle" type="button" aria-label="Collapse projects" aria-expanded="true" aria-controls="projectSidebarList" title="Collapse projects">
+                <i data-lucide="chevron-down"></i>
+              </button>
+            </div>
+            <div class="nav-subitems" id="projectSidebarList">
+              <button class="mini-project active" data-project="Tegy Launch">Tegy Launch</button>
+              <button class="mini-project" data-project="Series A Board Pack">Series A Board Pack</button>
+              <button class="mini-project" data-project="Target Fit Screen">Target Fit Screen</button>
+              <button class="view-all-projects" type="button" data-page-link="projects">View all projects</button>
+            </div>
+          </div>
+          <button class="nav-item" data-page-target="vault">
+            <i data-lucide="archive"></i>
+            <span>Vault</span>
+          </button>
+          <button class="nav-item" data-page-target="artifacts">
+            <i data-lucide="file-stack"></i>
+            <span>Artifacts</span>
+          </button>
+          <button class="nav-item" data-page-target="decisions">
+            <i data-lucide="shield-check"></i>
+            <span>Decision Log</span>
+          </button>
+          <button class="nav-item" data-page-target="api">
+            <i data-lucide="square-terminal"></i>
+            <span>API</span>
+          </button>
+        </nav>
+
+        <section class="sidebar-chats" aria-label="Chat history">
+          <button class="new-chat-button" id="newChatButton" type="button">
+            <i data-lucide="plus"></i>
+            <span>New chat</span>
+          </button>
+
+          <div class="history-scroll">
+            <div class="history-section">
+              <p>Pinned</p>
+              <div class="history-chat-row">
+                <button class="history-chat" type="button" data-chat-title="Agent marketplace for GTM launch">Agent marketplace for GTM launch</button>
+              </div>
+            </div>
+
+            <div class="history-section recents-section">
+              <div class="history-heading-row">
+                <button class="history-heading-button" id="recentsToggle" type="button" aria-expanded="true" aria-controls="recentChatList">
+                  <span>Recents</span>
+                  <i data-lucide="chevron-down"></i>
+                </button>
+              </div>
+              <div class="recent-chat-list" id="recentChatList">
+                <div class="history-chat-row">
+                  <button class="history-chat" type="button" data-chat-title="Segment decision memo">Segment decision memo</button>
+                </div>
+                <div class="history-chat-row">
+                  <button class="history-chat" type="button" data-chat-title="Series A board narrative">Series A board narrative</button>
+                </div>
+                <div class="history-chat-row">
+                  <button class="history-chat" type="button" data-chat-title="Target fit screen">Target fit screen</button>
+                </div>
+                <div class="history-chat-row active">
+                  <button class="history-chat" type="button" data-chat-title="Landing page brief">Landing page brief</button>
+                  <button class="history-chat-menu" type="button" aria-label="Chat options"><i data-lucide="more-vertical"></i></button>
+                </div>
+                <div class="history-chat-row">
+                  <button class="history-chat" type="button" data-chat-title="Pricing package memo">Pricing package memo</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="sidebar-footer">
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode">
+            <i data-lucide="moon"></i>
+            <span>Dark mode</span>
+          </button>
+          <button class="account-button" id="accountButton" aria-expanded="false" aria-controls="accountMenu">
+            <span class="account-avatar">B</span>
+            <span class="account-copy">
+              <strong>Borg</strong>
+              <small>RocketMinds</small>
+            </span>
+            <i class="account-chevron" data-lucide="chevron-up"></i>
+          </button>
+          <div class="account-menu" id="accountMenu" hidden>
+            <button type="button"><i data-lucide="user"></i><span>Account</span></button>
+            <button type="button"><i data-lucide="settings"></i><span>Settings</span></button>
+            <button type="button"><i data-lucide="circle-help"></i><span>Help</span></button>
+            <button type="button"><i data-lucide="log-out"></i><span>Sign out</span></button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-shell">
+        <section class="page" id="projectsPage" data-page="projects">
+          <header class="page-header">
+            <div class="page-heading">
+              <div class="page-title-row">
+                <i data-lucide="briefcase-business"></i>
+                <h1>Projects</h1>
+              </div>
+              <p class="page-subtitle">Strategic matters</p>
+            </div>
+            <button class="primary-button" id="newProjectInline"><i data-lucide="plus"></i> New project</button>
+          </header>
+
+          <section class="project-layout">
+            <div class="project-list tall">
+              <button class="project-card selected" data-project-detail="Tegy Launch">
+                <strong>Tegy Launch</strong>
+                <span>Company context, GTM sources, 14 decision locks</span>
+              </button>
+              <button class="project-card" data-project-detail="Series A Board Pack">
+                <strong>Series A Board Pack</strong>
+                <span>Investor memo, market notes, board artifacts</span>
+              </button>
+              <button class="project-card" data-project-detail="Target Fit Screen">
+                <strong>Target Fit Screen</strong>
+                <span>M&amp;A thesis, target data, fit memos</span>
+              </button>
+            </div>
+
+            <article class="panel project-detail-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Selected project</p>
+                  <h2 id="projectDetailTitle">Tegy Launch</h2>
+                </div>
+                <button class="secondary-button" data-page-link="vault"><i data-lucide="folder-open"></i> Open Vault</button>
+              </div>
+              <div class="context-object-grid" aria-label="Project-owned objects">
+                <button class="context-object" data-page-link="vault">
+                  <i data-lucide="archive"></i>
+                  <span>Vault</span>
+                </button>
+                <button class="context-object" data-page-link="assistant">
+                  <i data-lucide="message-square"></i>
+                  <span>Copilot</span>
+                </button>
+                <button class="context-object" data-prompt="Continue the active lane for this project and tell me the next decision to lock.">
+                  <i data-lucide="workflow"></i>
+                  <span>Active Output</span>
+                </button>
+                <button class="context-object" data-page-link="artifacts">
+                  <i data-lucide="file-stack"></i>
+                  <span>Artifacts</span>
+                </button>
+                <button class="context-object" data-page-link="decisions">
+                  <i data-lucide="shield-check"></i>
+                  <span>Decision Log</span>
+                </button>
+              </div>
+              <div class="detail-grid">
+                <article>
+                  <span>Company context</span>
+                  <strong>Founder-led PLG launch</strong>
+                  <small>Organic-first, modest budget, 90-day window</small>
+                </article>
+                <article>
+                  <span>Sources</span>
+                  <strong>38 sources</strong>
+                  <small>Decks, interviews, models, memos</small>
+                </article>
+                <article>
+                  <span>Operating constraints</span>
+                  <strong>3 actor model</strong>
+                  <small>Founder, engineering, GTM agency pending</small>
+                </article>
+                <article>
+                  <span>Decision Log</span>
+                  <strong>14 locks</strong>
+                  <small>4 pending before next lane run</small>
+                </article>
+                <article>
+                  <span>Artifacts</span>
+                  <strong>12 saved</strong>
+                  <small>Memo, PRD, GTM plan, board brief</small>
+                </article>
+                <article>
+                  <span>Active Output</span>
+                  <strong>GTM launch checklist</strong>
+                  <small>Wedge, motion, channel, message, first operating rhythm</small>
+                </article>
+              </div>
+              <div class="history-card">
+                <strong>Copilot History</strong>
+                <p>Last Copilot run: GTM motion selected as PLG primary with AI-agent-led activation. Critic pass recommends revise-before-ship.</p>
+              </div>
+            </article>
+          </section>
+        </section>
+
+        <section class="page active" id="assistantPage" data-page="assistant">
+          <div class="assistant-stage">
+            <div class="context-actions" aria-label="Context selectors">
+              <button data-page-link="projects"><i data-lucide="folder-check"></i> Choose Project</button>
+              <button type="button" id="setMatterButton"><i data-lucide="briefcase"></i> Choose Output</button>
+            </div>
+            <div class="lane-picker" id="lanePicker" hidden>
+              <button type="button" data-output="Segment decision memo">
+                <strong>Segment decision memo</strong>
+                <span>Options, tradeoffs, decision memo</span>
+              </button>
+              <button type="button" data-output="Roadmap rationale">
+                <strong>Roadmap rationale</strong>
+                <span>Roadmap rationale, PRD, prioritization memo</span>
+              </button>
+              <button type="button" data-output="GTM launch checklist">
+                <strong>GTM launch checklist</strong>
+                <span>Wedge, motion, channel, launch checklist</span>
+              </button>
+              <button type="button" data-output="Investor memo">
+                <strong>Investor memo</strong>
+                <span>Investor memo, IC memo, thesis critique</span>
+              </button>
+            </div>
+            <div class="scope-strip" aria-live="polite">
+              <span>Project</span>
+              <strong id="activeProjectScope">Tegy Launch</strong>
+              <span>Output</span>
+              <strong id="activeOutputScope">No output selected</strong>
+              <span>Context</span>
+              <strong id="activeContextScope">No sources selected</strong>
+            </div>
+
+            <form class="composer" id="composer">
+              <textarea id="promptInput" rows="5" placeholder="Ask Tegy to size a market, pressure-test a GTM motion, draft a PRD, or screen an acquisition..." aria-label="Ask Tegy"></textarea>
+              <div class="composer-toolbar">
+                <div class="tool-buttons">
+                  <button type="button"><i data-lucide="plus"></i> Sources</button>
+                  <button type="button"><i data-lucide="list-plus"></i> Prompts</button>
+                  <button type="button"><i data-lucide="sliders-horizontal"></i> Customize</button>
+                </div>
+                <button class="send-button" type="submit" aria-label="Submit prompt"><i data-lucide="arrow-up"></i></button>
+              </div>
+            </form>
+
+            <div class="context-source-panel" aria-label="Copilot context sources">
+              <div class="context-source-header">
+                <span>Context</span>
+                <strong id="contextCount">0 selected</strong>
+              </div>
+              <div class="source-chip-row" aria-label="Included context">
+                <button class="source-chip" data-context-chip="project-vault" aria-pressed="false"><span class="chip-dot green"></span><span class="chip-label" id="projectVaultChip">Project Sources</span><i class="chip-check" data-lucide="check"></i></button>
+                <button class="source-chip" data-context-chip="global-vault" aria-pressed="false"><span class="chip-dot amber"></span><span class="chip-label">Global Context</span><i class="chip-check" data-lucide="check"></i></button>
+                <button class="source-chip" data-context-chip="prior-project" aria-pressed="false"><span class="chip-dot blue"></span><span class="chip-label" id="priorProjectChip">Prior Project</span><i class="chip-check" data-lucide="check"></i></button>
+                <button class="source-chip" data-context-chip="decision-log" aria-pressed="false"><span class="chip-dot dark"></span><span class="chip-label">Decision Log</span><i class="chip-check" data-lucide="check"></i></button>
+              </div>
+            </div>
+
+            <div class="conversation-stack" id="conversationStack" aria-live="polite"></div>
+
+          </div>
+        </section>
+
+        <section class="page" id="vaultPage" data-page="vault">
+          <header class="page-header">
+            <div class="page-heading">
+              <div class="page-title-row">
+                <i data-lucide="archive"></i>
+                <h1 id="vaultTitle">Vault</h1>
+              </div>
+              <p class="page-subtitle" id="vaultSubtitle">Global Context</p>
+            </div>
+            <button class="primary-button" id="addSourceButton"><i data-lucide="file-plus-2"></i> Upload Source</button>
+          </header>
+
+          <div class="project-picker">
+            <div class="vault-scope project-tab-control" aria-label="Vault scope">
+              <button class="vault-scope-button project-tab-trigger" id="vaultProjectTab" type="button" aria-expanded="false" aria-controls="vaultProjectMenu">
+                <span id="vaultProjectTabLabel">Tegy Launch</span>
+                <i data-lucide="chevron-down"></i>
+              </button>
+              <button class="vault-scope-button active" type="button" data-vault-scope="global">Global</button>
+            </div>
+            <div class="project-tab-menu" id="vaultProjectMenu" hidden></div>
+          </div>
+
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Ask Across Vault</p>
+                <h2 id="vaultScopeTitle">Summarize, Compare, Extract Global Context</h2>
+              </div>
+              <div class="header-actions">
+                <button class="secondary-button vault-action" data-vault-action="Summarize">Summarize</button>
+                <button class="secondary-button vault-action" data-vault-action="Compare">Compare</button>
+                <button class="secondary-button vault-action" data-vault-action="Extract table">Extract table</button>
+              </div>
+            </div>
+            <div class="source-table">
+              <div class="table-head"><span>Source</span><span>Type</span><span>Signal</span><span>Status</span></div>
+              <div id="vaultRows"></div>
+            </div>
+            <div class="result-box" id="vaultResult">Select an action to work across global context, frameworks, templates, and reusable decisions.</div>
+          </section>
+        </section>
+
+        <section class="page" id="artifactsPage" data-page="artifacts">
+          <header class="page-header">
+            <div class="page-heading">
+              <div class="page-title-row">
+                <i data-lucide="file-stack"></i>
+                <h1>Artifacts</h1>
+              </div>
+              <p class="page-subtitle" id="artifactSubtitle">All Project Outputs</p>
+            </div>
+            <button class="secondary-button"><i data-lucide="download"></i> Export Selected</button>
+          </header>
+
+          <div class="artifact-filters" aria-label="Artifact filters">
+            <div class="filter-group">
+              <div class="project-picker">
+                <div class="vault-scope project-tab-control artifact-project-tabs">
+                  <button class="vault-scope-button project-tab-trigger" id="artifactProjectTab" type="button" aria-expanded="false" aria-controls="artifactProjectMenu">
+                    <span id="artifactProjectTabLabel">Tegy Launch</span>
+                    <i data-lucide="chevron-down"></i>
+                  </button>
+                  <button class="vault-scope-button active" type="button" data-artifact-scope="all">All Projects</button>
+                </div>
+                <div class="project-tab-menu" id="artifactProjectMenu" hidden></div>
+              </div>
+            </div>
+            <div class="filter-group">
+              <span class="filter-label">Type</span>
+              <div class="filter-chip-row" id="artifactTypeFilters"></div>
+            </div>
+          </div>
+
+          <section class="artifact-grid" id="artifactGrid" aria-label="Project artifacts"></section>
+          <article class="panel artifact-preview">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Preview</p>
+                <h2 id="artifactTitle">Segment decision memo</h2>
+              </div>
+              <button class="primary-button"><i data-lucide="file-output"></i> Open Artifact</button>
+            </div>
+            <p id="artifactDescription">Compare strategic options, clarify tradeoffs, and choose a path with more confidence.</p>
+          </article>
+        </section>
+
+        <section class="page" id="decisionsPage" data-page="decisions">
+          <header class="page-header">
+            <div class="page-heading">
+              <div class="page-title-row">
+                <i data-lucide="shield-check"></i>
+                <h1>Decision Log</h1>
+              </div>
+              <p class="page-subtitle">Locks and Assumptions</p>
+            </div>
+            <button class="primary-button"><i data-lucide="plus"></i> Add Decision</button>
+          </header>
+
+          <section class="decision-log" id="decisionLog">
+            <article class="decision-card pending">
+              <span>Pending</span>
+              <strong>ABM tier-1 named list</strong>
+              <p>Founder validation required before per-target assets.</p>
+              <button class="lock-decision">Lock</button>
+            </article>
+            <article class="decision-card pending">
+              <span>Pending</span>
+              <strong>Creator-economy validation priority</strong>
+              <p>Validate with 5-10 interviews before major creator-channel investment.</p>
+              <button class="lock-decision">Lock</button>
+            </article>
+            <article class="decision-card locked">
+              <span>Locked</span>
+              <strong>GTM motion</strong>
+              <p>PLG primary with AI-agent-led activation layer.</p>
+            </article>
+            <article class="decision-card default">
+              <span>Default</span>
+              <strong>PostHog analytics</strong>
+              <p>Low-stakes vendor default; revisit only if instrumentation needs shift.</p>
+            </article>
+          </section>
+        </section>
+
+        <section class="page" id="apiPage" data-page="api">
+          <header class="page-header">
+            <div class="page-heading">
+              <div class="page-title-row">
+                <i data-lucide="square-terminal"></i>
+                <h1>API</h1>
+              </div>
+              <p class="page-subtitle">Use Tegy in Claude Code or Codex</p>
+            </div>
+            <button class="secondary-button"><i data-lucide="book-open"></i> Docs</button>
+          </header>
+
+          <section class="api-layout" aria-label="Agent setup">
+            <article class="api-card">
+              <div class="api-card-header">
+                <span class="api-step">1</span>
+                <div>
+                  <h2>Set up your agent</h2>
+                  <p id="agentSetupTitle">Claude Code</p>
+                </div>
+              </div>
+              <div class="api-card-body">
+                <div class="agent-tabs" aria-label="Agent selector">
+                  <button class="agent-tab active" type="button" data-agent="claude"><i data-lucide="bot"></i> Claude Code</button>
+                  <button class="agent-tab" type="button" data-agent="codex"><i data-lucide="terminal"></i> Codex</button>
+                </div>
+                <p class="api-muted">In your agent terminal, run:</p>
+                <div class="command-box">
+                  <code id="setupCommand">claude "set up https://tegy.io/SKILL.md"</code>
+                  <button class="copy-button" type="button" data-copy-target="setupCommand"><i data-lucide="copy"></i> Copy</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="api-card">
+              <div class="api-card-header">
+                <span class="api-step">2</span>
+                <div>
+                  <h2>Your API key</h2>
+                  <p>Authorize Tegy calls from local agents</p>
+                </div>
+              </div>
+              <div class="api-card-body">
+                <p class="api-muted">Give this key to your agent when it asks for access.</p>
+                <div class="key-row">
+                  <code><span>main</span> tegy_live_********</code>
+                  <div class="key-actions">
+                    <button class="copy-button" type="button" data-copy-value="TEGY_API_KEY=tegy_live_xxxxxxxx"><i data-lucide="copy"></i> Copy</button>
+                    <button class="secondary-button" type="button"><i data-lucide="settings"></i> Manage</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="api-card">
+              <div class="api-card-header">
+                <span class="api-step">3</span>
+                <div>
+                  <h2>Run Tegy from your repo</h2>
+                  <p id="agentRunTitle">Claude Code command</p>
+                </div>
+              </div>
+              <div class="api-card-body">
+                <p class="api-muted">Paste this when you want the agent to use project context instead of opening the web app.</p>
+                <div class="command-box">
+                  <code id="runCommand">claude "Use Tegy on this repo. Read the active project context, vault, decision log, and artifacts, then draft the next decision-ready output."</code>
+                  <button class="copy-button" type="button" data-copy-target="runCommand"><i data-lucide="copy"></i> Copy</button>
+                </div>
+              </div>
+            </article>
+          </section>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
