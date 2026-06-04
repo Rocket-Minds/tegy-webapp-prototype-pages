@@ -1615,6 +1615,11 @@ h2 {
   line-height: 1.45;
 }
 
+.artifact-card small {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .history-card {
   margin: 0 14px 14px;
 }
@@ -1857,7 +1862,7 @@ h2 {
   min-height: 29px;
   border-radius: 5px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .filter-chip:hover,
