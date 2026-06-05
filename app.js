@@ -3120,6 +3120,37 @@ function resizePromptInput() {
   input.style.height = `${Math.min(input.scrollHeight, 180)}px`;
 }
 
+function startAssistantSession(options = {}) {
+  const {
+    project = getDefaultProjectName(),
+    focusInput = true,
+    clearHistorySelection = true,
+  } = options;
+  const stack = document.querySelector("#conversationStack");
+  const input = document.querySelector("#promptInput");
+
+  if (clearHistorySelection) {
+    document.querySelectorAll(".history-chat-row").forEach((row) => row.classList.remove("active"));
+  }
+  if (stack) stack.innerHTML = "";
+  setChatMode(false);
+  state.assistantProject = project;
+  state.assistantOutput = null;
+  state.assistantLaneChoice = "auto";
+  state.assistantChoicesLocked = false;
+  document.querySelectorAll("#lanePicker [data-output]").forEach((button) => button.classList.remove("selected"));
+  document.querySelectorAll(".source-chip").forEach((chip) => setSourceChipActive(chip, false));
+  renderAssistantScope();
+  if (input) {
+    input.value = "";
+    input.style.height = "";
+    input.placeholder = getPromptPlaceholder();
+    if (focusInput) input.focus();
+  }
+  renderRoutingLock();
+  setPage("assistant");
+}
+
 function init() {
   setTheme(getPreferredTheme());
   setSidebarCollapsed(window.localStorage.getItem("tegy-sidebar-collapsed") === "true");
@@ -3145,26 +3176,7 @@ function init() {
   });
 
   document.querySelector("#newChatButton").addEventListener("click", () => {
-    document.querySelectorAll(".history-chat-row").forEach((row) => row.classList.remove("active"));
-    const stack = document.querySelector("#conversationStack");
-    const input = document.querySelector("#promptInput");
-    if (stack) stack.innerHTML = "";
-    setChatMode(false);
-    state.assistantProject = getDefaultProjectName();
-    state.assistantOutput = null;
-    state.assistantLaneChoice = "auto";
-    state.assistantChoicesLocked = false;
-    document.querySelectorAll("#lanePicker [data-output]").forEach((button) => button.classList.remove("selected"));
-    document.querySelectorAll(".source-chip").forEach((chip) => setSourceChipActive(chip, false));
-    renderAssistantScope();
-    if (input) {
-      input.value = "";
-      input.style.height = "";
-      input.placeholder = getPromptPlaceholder();
-      input.focus();
-    }
-    renderRoutingLock();
-    setPage("assistant");
+    startAssistantSession();
   });
 
   document.querySelector("#recentsToggle").addEventListener("click", () => {
@@ -3249,6 +3261,15 @@ function init() {
       const page = button.dataset.pageTarget || button.dataset.pageLink;
       if (button.closest(".project-detail-panel")) {
         openProjectScopedPage(page);
+        if (page === "assistant") {
+          startAssistantSession({ project: state.activeProject });
+        }
+        if (isMobileNav()) setMobileMenu(false);
+        return;
+      }
+
+      if (page === "assistant") {
+        startAssistantSession();
         if (isMobileNav()) setMobileMenu(false);
         return;
       }
