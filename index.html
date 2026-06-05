@@ -7,9 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=depth-reasoning-controls" />
+    <link rel="stylesheet" href="./styles.css?v=depth-menu" />
     <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script defer src="./app.js?v=depth-reasoning-controls"></script>
+    <script defer src="./app.js?v=depth-menu"></script>
   </head>
   <body>
     <section class="desktop-only-gate" aria-label="Desktop required">
@@ -48,23 +48,10 @@
             <i data-lucide="message-square"></i>
             <span>Copilot</span>
           </button>
-          <div class="nav-projects-group projects-open" id="projectsNavGroup">
-            <div class="nav-project-row">
-              <button class="nav-item nav-project-link" data-page-target="projects">
-                <i data-lucide="briefcase-business"></i>
-                <span>Projects</span>
-              </button>
-              <button class="project-accordion-toggle" id="projectsAccordionToggle" type="button" aria-label="Collapse projects" aria-expanded="true" aria-controls="projectSidebarList" title="Collapse projects">
-                <i data-lucide="chevron-down"></i>
-              </button>
-            </div>
-            <div class="nav-subitems" id="projectSidebarList">
-              <button class="mini-project active" data-project="Tegy Launch">Tegy Launch</button>
-              <button class="mini-project" data-project="Series A Board Pack">Series A Board Pack</button>
-              <button class="mini-project" data-project="Target Fit Screen">Target Fit Screen</button>
-              <button class="view-all-projects" type="button" data-page-link="projects">View all projects</button>
-            </div>
-          </div>
+          <button class="nav-item" data-page-target="projects">
+            <i data-lucide="briefcase-business"></i>
+            <span>Projects</span>
+          </button>
           <button class="nav-item" data-page-target="vault">
             <i data-lucide="archive"></i>
             <span>Vault</span>
@@ -99,12 +86,12 @@
 
             <div class="history-section recents-section">
               <div class="history-heading-row">
-                <button class="history-heading-button" id="recentsToggle" type="button" aria-expanded="false" aria-controls="recentChatList">
+                <button class="history-heading-button" id="recentsToggle" type="button" aria-expanded="true" aria-controls="recentChatList">
                   <span>Recents</span>
-                  <i data-lucide="chevron-right"></i>
+                  <i data-lucide="chevron-down"></i>
                 </button>
               </div>
-              <div class="recent-chat-list" id="recentChatList" hidden>
+              <div class="recent-chat-list" id="recentChatList">
                 <div class="history-chat-row">
                   <button class="history-chat" type="button" data-chat-title="Segment decision memo">Segment decision memo</button>
                 </div>
@@ -127,6 +114,10 @@
         </section>
 
         <div class="sidebar-footer">
+          <a class="company-pack-button" href="https://rocketminds.io/resources/company-starter-pack">
+            <i data-lucide="package-open"></i>
+            <span>Free company pack</span>
+          </a>
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode">
             <i data-lucide="moon"></i>
             <span>Dark mode</span>
@@ -158,33 +149,55 @@
               </div>
               <p class="page-subtitle">Strategic matters</p>
             </div>
-            <button class="primary-button" id="newProjectInline"><i data-lucide="plus"></i> New project</button>
+            <div class="header-actions project-browser-actions">
+              <button class="icon-button" type="button" aria-label="Sort projects" title="Sort projects">
+                <i data-lucide="arrow-up-down"></i>
+              </button>
+              <button class="icon-button" type="button" aria-label="Search projects" title="Search projects">
+                <i data-lucide="search"></i>
+              </button>
+              <button class="primary-button" id="newProjectInline"><i data-lucide="plus"></i> New project</button>
+            </div>
           </header>
 
           <section class="project-layout">
             <div class="project-list tall">
-              <button class="project-card selected" data-project-detail="Tegy Launch">
+              <button class="project-card project-browser-card" data-project-detail="Tegy Launch">
                 <strong>Tegy Launch</strong>
-                <span>Company context, GTM sources, 14 decision locks</span>
+                <span>Founder-led PLG launch, GTM sources, and decision locks.</span>
+                <time datetime="2026-06-05">Jun 5</time>
               </button>
-              <button class="project-card" data-project-detail="Series A Board Pack">
+              <button class="project-card project-browser-card" data-project-detail="Series A Board Pack">
                 <strong>Series A Board Pack</strong>
-                <span>Investor memo, market notes, board artifacts</span>
+                <span>Investor narrative, market notes, and board-ready outputs.</span>
+                <time datetime="2026-06-04">Jun 4</time>
               </button>
-              <button class="project-card" data-project-detail="Target Fit Screen">
+              <button class="project-card project-browser-card" data-project-detail="Target Fit Screen">
                 <strong>Target Fit Screen</strong>
-                <span>M&amp;A thesis, target data, fit memos</span>
+                <span>M&amp;A thesis, target evidence, and fit memos.</span>
+                <time datetime="2026-06-02">Jun 2</time>
+              </button>
+              <button class="project-card project-browser-card" data-project-detail="Pricing Package">
+                <strong>Pricing Package</strong>
+                <span>Packaging assumptions, value capture, and conversion risks.</span>
+                <time datetime="2026-05-28">May 28</time>
               </button>
             </div>
 
             <article class="panel project-detail-panel">
               <div class="panel-header">
-                <div>
-                  <p class="eyebrow">Selected project</p>
+                <div class="project-detail-heading">
+                  <button class="text-button project-back-button" id="projectBackButton" type="button">
+                    <i data-lucide="arrow-left"></i>
+                    Projects
+                  </button>
+                  <p class="eyebrow">Summary</p>
                   <h2 id="projectDetailTitle">Tegy Launch</h2>
                 </div>
-                <button class="secondary-button" data-page-link="vault"><i data-lucide="folder-open"></i> Open Vault</button>
               </div>
+              <p class="project-summary-copy" id="projectSummaryCopy">
+                Tegy Launch keeps the GTM motion, product constraints, and source context in one place. Use it to turn scattered inputs into a decision-ready launch output and lock the assumptions that matter.
+              </p>
               <div class="context-object-grid" aria-label="Project-owned objects">
                 <button class="context-object" data-page-link="assistant">
                   <i data-lucide="message-square"></i>
@@ -249,6 +262,9 @@
 
         <section class="page active" id="assistantPage" data-page="assistant">
           <div class="assistant-stage">
+            <div class="assistant-intro">
+              <h1>What should Tegy help decide?</h1>
+            </div>
             <div class="context-actions" aria-label="Context selectors">
               <button data-page-link="projects"><i data-lucide="folder-check"></i> Choose Project</button>
               <button type="button" id="setMatterButton"><i data-lucide="briefcase"></i> Choose Output</button>
@@ -284,26 +300,46 @@
               <textarea id="promptInput" rows="5" placeholder="Ask Tegy to size a market, pressure-test a GTM motion, draft a PRD, or screen an acquisition..." aria-label="Ask Tegy"></textarea>
               <div class="composer-toolbar">
                 <div class="tool-buttons">
-                  <button type="button"><i data-lucide="plus"></i> Sources</button>
-                  <button class="assistant-setting-control" id="depthToggle" type="button" aria-expanded="false" aria-controls="depthPicker"><i data-lucide="gauge"></i> <span id="depthButtonLabel">Depth: Heavy</span></button>
+                  <button class="attach-file-button" id="attachFilesButton" type="button" aria-label="Attach files or photos" title="Attach files or photos"><i data-lucide="plus"></i></button>
+                  <input id="attachmentInput" type="file" multiple accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.csv,.txt,.md" hidden>
+                  <div class="composer-depth-picker">
+                    <button class="assistant-setting-control project-tab-trigger" id="depthToggle" type="button" aria-expanded="false" aria-controls="depthPicker"><i data-lucide="gauge"></i> <span id="depthButtonLabel">Depth: Heavy</span><i data-lucide="chevron-down"></i></button>
+                    <div class="project-tab-menu depth-menu" id="depthPicker" hidden>
+                      <button type="button" data-depth="Heavy">
+                        <strong>Heavy</strong>
+                        <span>End-to-end waterfall with critic pass.</span>
+                      </button>
+                      <button type="button" data-depth="Med">
+                        <strong>Med</strong>
+                        <span>Targeted workstream with checkpoints.</span>
+                      </button>
+                      <button type="button" data-depth="Lite">
+                        <strong>Lite</strong>
+                        <span>Quick take for a fast read.</span>
+                      </button>
+                    </div>
+                  </div>
                   <button class="assistant-setting-control" id="reasoningToggle" type="button" aria-expanded="false" aria-controls="reasoningPicker"><i data-lucide="brain-circuit"></i> <span id="reasoningButtonLabel">Reasoning: Auto</span></button>
                 </div>
                 <button class="send-button" type="submit" aria-label="Submit prompt"><i data-lucide="arrow-up"></i></button>
               </div>
+              <div class="composer-project-row">
+                <div class="composer-project-picker">
+                  <button class="assistant-project-control project-tab-trigger" id="assistantProjectTab" type="button" aria-expanded="false" aria-controls="assistantProjectMenu">
+                    <i data-lucide="folder-plus"></i>
+                    <span>Work in a project</span>
+                    <strong id="assistantProjectTabLabel">Tegy Launch</strong>
+                    <i data-lucide="chevron-down"></i>
+                  </button>
+                  <div class="project-tab-menu assistant-project-menu" id="assistantProjectMenu" hidden></div>
+                </div>
+              </div>
             </form>
-            <div class="setting-picker" id="depthPicker" hidden>
-              <button type="button" data-depth="Heavy">
-                <strong>Heavy</strong>
-                <span>End-to-end waterfall, critic pass, full artifact set.</span>
-              </button>
-              <button type="button" data-depth="Med">
-                <strong>Med</strong>
-                <span>Targeted workstream with focused checkpoints.</span>
-              </button>
-              <button type="button" data-depth="Lite">
-                <strong>Lite</strong>
-                <span>Quick take for a fast read.</span>
-              </button>
+            <div class="prompt-rail" aria-label="Example Tegy prompts">
+              <button type="button" data-prompt="Should we move upmarket or stay focused on the current wedge?">Move upmarket?</button>
+              <button type="button" data-prompt="Pressure-test the GTM motion and tell me the next decision to lock.">Pressure-test GTM</button>
+              <button type="button" data-prompt="Turn the current context into a board-ready strategy memo.">Draft board memo</button>
+              <button type="button" data-prompt="Compare acquisition targets and recommend which to pursue first.">Screen targets</button>
             </div>
             <div class="setting-picker" id="reasoningPicker" hidden>
               <button type="button" data-reasoning="Auto">
@@ -347,16 +383,16 @@
               </div>
               <p class="page-subtitle" id="vaultSubtitle">Global Context</p>
             </div>
-            <button class="primary-button" id="addSourceButton"><i data-lucide="file-plus-2"></i> Upload Source</button>
+            <button class="primary-button scope-creep-control" id="addSourceButton"><i data-lucide="file-plus-2"></i> Upload Source</button>
           </header>
 
           <div class="project-picker">
             <div class="vault-scope project-tab-control" aria-label="Vault scope">
+              <button class="vault-scope-button active" type="button" data-vault-scope="global">Global</button>
               <button class="vault-scope-button project-tab-trigger" id="vaultProjectTab" type="button" aria-expanded="false" aria-controls="vaultProjectMenu">
                 <span id="vaultProjectTabLabel">Tegy Launch</span>
                 <i data-lucide="chevron-down"></i>
               </button>
-              <button class="vault-scope-button active" type="button" data-vault-scope="global">Global</button>
             </div>
             <div class="project-tab-menu" id="vaultProjectMenu" hidden></div>
           </div>
@@ -364,20 +400,15 @@
           <section class="panel">
             <div class="panel-header">
               <div>
-                <p class="eyebrow">Ask Across Vault</p>
-                <h2 id="vaultScopeTitle">Summarize, Compare, Extract Global Context</h2>
-              </div>
-              <div class="header-actions">
-                <button class="secondary-button vault-action" data-vault-action="Summarize">Summarize</button>
-                <button class="secondary-button vault-action" data-vault-action="Compare">Compare</button>
-                <button class="secondary-button vault-action" data-vault-action="Extract table">Extract table</button>
+                <p class="eyebrow">Source Context</p>
+                <h2 id="vaultScopeTitle">Sources Tegy can cite</h2>
               </div>
             </div>
             <div class="source-table">
               <div class="table-head"><span>Source</span><span>Type</span><span>Signal</span><span>Status</span></div>
               <div id="vaultRows"></div>
             </div>
-            <div class="result-box" id="vaultResult">Select an action to work across global context, frameworks, templates, and reusable decisions.</div>
+            <div class="result-box" id="vaultResult">Select a source to inspect what Tegy can use as evidence.</div>
           </section>
         </section>
 
@@ -388,20 +419,20 @@
                 <i data-lucide="file-stack"></i>
                 <h1>Artifacts</h1>
               </div>
-              <p class="page-subtitle" id="artifactSubtitle">All Project Outputs</p>
+              <p class="page-subtitle" id="artifactSubtitle">Generated outputs</p>
             </div>
-            <button class="secondary-button"><i data-lucide="download"></i> Export Selected</button>
+            <button class="secondary-button scope-creep-control"><i data-lucide="download"></i> Export Selected</button>
           </header>
 
           <div class="artifact-filters" aria-label="Artifact filters">
             <div class="filter-group">
               <div class="project-picker">
                 <div class="vault-scope project-tab-control artifact-project-tabs">
+                  <button class="vault-scope-button active" type="button" data-artifact-scope="all">All Projects</button>
                   <button class="vault-scope-button project-tab-trigger" id="artifactProjectTab" type="button" aria-expanded="false" aria-controls="artifactProjectMenu">
                     <span id="artifactProjectTabLabel">Tegy Launch</span>
                     <i data-lucide="chevron-down"></i>
                   </button>
-                  <button class="vault-scope-button active" type="button" data-artifact-scope="all">All Projects</button>
                 </div>
                 <div class="project-tab-menu" id="artifactProjectMenu" hidden></div>
               </div>
@@ -412,6 +443,13 @@
             </div>
           </div>
 
+          <div class="output-table-head" aria-hidden="true">
+            <span>Name</span>
+            <span>Description</span>
+            <span>Project</span>
+            <span>Status</span>
+            <span>Date</span>
+          </div>
           <section class="artifact-grid" id="artifactGrid" aria-label="Project artifacts"></section>
           <div class="artifact-pagination" id="artifactPagination" aria-label="Artifact pages"></div>
           <article class="panel artifact-preview">
@@ -441,7 +479,6 @@
             </div>
             <div class="header-actions">
               <button class="secondary-button" id="copyArtifactButton" type="button"><i data-lucide="copy"></i> Copy Markdown</button>
-              <button class="primary-button" id="artifactLockButton" type="button"><i data-lucide="shield-check"></i> Add Decision Lock</button>
             </div>
           </header>
 
@@ -483,9 +520,8 @@
                 <i data-lucide="shield-check"></i>
                 <h1>Decision Log</h1>
               </div>
-              <p class="page-subtitle">Locks and Assumptions</p>
+              <p class="page-subtitle">Decision points Tegy should remember.</p>
             </div>
-            <button class="primary-button"><i data-lucide="plus"></i> Add Decision</button>
           </header>
 
           <section class="decision-log" id="decisionLog">
@@ -498,7 +534,10 @@
                 <div><dt>Trace</dt><dd>GTM Strategy -> launch checklist</dd></div>
                 <div><dt>Consumed by</dt><dd>Outbound asset run</dd></div>
               </dl>
-              <button class="lock-decision">Lock</button>
+              <div class="decision-actions">
+                <button class="lock-decision" type="button">Lock</button>
+                <button class="discard-decision" type="button">Discard</button>
+              </div>
             </article>
             <article class="decision-card pending">
               <span>Pending</span>
@@ -509,7 +548,10 @@
                 <div><dt>Trace</dt><dd>Product Management -> roadmap rationale</dd></div>
                 <div><dt>Consumed by</dt><dd>Activation roadmap</dd></div>
               </dl>
-              <button class="lock-decision">Lock</button>
+              <div class="decision-actions">
+                <button class="lock-decision" type="button">Lock</button>
+                <button class="discard-decision" type="button">Discard</button>
+              </div>
             </article>
             <article class="decision-card locked">
               <span>Locked</span>
@@ -521,6 +563,10 @@
                 <div><dt>Consumed by</dt><dd>GTM launch checklist</dd></div>
                 <div><dt>Lock method</dt><dd>Founder review</dd></div>
               </dl>
+              <div class="decision-actions">
+                <button class="lock-decision" type="button" disabled>Lock</button>
+                <button class="discard-decision" type="button">Discard</button>
+              </div>
             </article>
             <article class="decision-card default">
               <span>Default</span>
@@ -532,6 +578,10 @@
                 <div><dt>Consumed by</dt><dd>Instrumentation plan</dd></div>
                 <div><dt>Revisit</dt><dd>Usage limits change</dd></div>
               </dl>
+              <div class="decision-actions">
+                <button class="lock-decision" type="button">Lock</button>
+                <button class="discard-decision" type="button">Discard</button>
+              </div>
             </article>
           </section>
         </section>
@@ -543,7 +593,7 @@
                 <i data-lucide="square-terminal"></i>
                 <h1>API</h1>
               </div>
-              <p class="page-subtitle">Use Tegy in Claude Code or Codex</p>
+              <p class="page-subtitle">Use Tegy from your own AI tool.</p>
             </div>
             <button class="secondary-button"><i data-lucide="book-open"></i> Docs</button>
           </header>
@@ -553,7 +603,7 @@
               <div class="api-card-header">
                 <span class="api-step">1</span>
                 <div>
-                  <h2>Set up your agent</h2>
+                  <h2>Connect Tegy to your agent</h2>
                   <p id="agentSetupTitle">Claude Code</p>
                 </div>
               </div>
@@ -562,7 +612,7 @@
                   <button class="agent-tab active" type="button" data-agent="claude"><i data-lucide="bot"></i> Claude Code</button>
                   <button class="agent-tab" type="button" data-agent="codex"><i data-lucide="terminal"></i> Codex</button>
                 </div>
-                <p class="api-muted">In your agent terminal, run:</p>
+                <p class="api-muted">One command adds Tegy routing to your terminal workflow.</p>
                 <div class="command-box">
                   <code id="setupCommand">npx --yes --package=https://strategy-platform-4.cluster-9.deploy.emergentcf.cloud/api/packages/tegy-skill.tgz tegy-skill add</code>
                   <button class="copy-button" type="button" data-copy-target="setupCommand"><i data-lucide="copy"></i> Copy</button>
@@ -574,12 +624,12 @@
               <div class="api-card-header">
                 <span class="api-step">2</span>
                 <div>
-                  <h2>Your API key</h2>
+                  <h2>Give your agent access</h2>
                   <p>Authorize Tegy calls from local agents</p>
                 </div>
               </div>
               <div class="api-card-body">
-                <p class="api-muted">Give this key to your agent when it asks for access.</p>
+                <p class="api-muted">Copy this key only when your local agent asks for it.</p>
                 <div class="key-row">
                   <code><span>main</span> tegy_live_********</code>
                   <div class="key-actions">
@@ -594,12 +644,12 @@
               <div class="api-card-header">
                 <span class="api-step">3</span>
                 <div>
-                  <h2>Run Tegy from your repo</h2>
+                  <h2>Ask for strategy work from your repo</h2>
                   <p id="agentRunTitle">Claude Code command</p>
                 </div>
               </div>
               <div class="api-card-body">
-                <p class="api-muted">Paste this when you want the agent to use project context instead of opening the web app.</p>
+                <p class="api-muted">Paste this when you want the same Tegy workflow without opening the web app.</p>
                 <div class="command-box">
                   <code id="runCommand">claude "Use Tegy. Read the selected project context, sources, decision log, and artifacts, then route through the right StrategyOS lane before drafting the next output."</code>
                   <button class="copy-button" type="button" data-copy-target="runCommand"><i data-lucide="copy"></i> Copy</button>

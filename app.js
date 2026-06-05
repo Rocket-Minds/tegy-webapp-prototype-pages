@@ -18,7 +18,7 @@ const state = {
 const artifactPageSize = 6;
 
 const defaultPromptPlaceholder =
-  "Ask Tegy to size a market, pressure-test a GTM motion, draft a PRD, or screen an acquisition...";
+  "Ask Tegy what to analyze, decide, or draft next...";
 
 function getDefaultProjectName() {
   return Object.keys(projectSummaries)[0] || null;
@@ -76,6 +76,23 @@ const projectSummaries = {
     history:
       "Last Copilot run: screened six targets against capability gap and produced one target-fit memo draft.",
   },
+  "Pricing Package": {
+    context: "Subscription packaging",
+    docs: "16 sources",
+    constraints: "WTP evidence thin",
+    decisions: "5 locks",
+    artifacts: "4 saved",
+    lane: "Pricing and packaging memo",
+    priorProject: "Prior Project",
+    contextNote: "Plan shape, value metric, discount logic, buyer objections",
+    docsNote: "Pricing tests, customer notes, comp screenshots",
+    constraintsNote: "Do not change tiers before WTP lock",
+    decisionsNote: "2 price fences need founder confirmation",
+    artifactsNote: "Pricing memo, FAQ, plan comparison table",
+    laneNote: "Value capture and package caveats in progress",
+    history:
+      "Last Copilot run: framed three pricing paths and flagged WTP as the load-bearing decision.",
+  },
 };
 
 const projectVaultSources = {
@@ -97,6 +114,23 @@ const projectVaultSources = {
     ["Screening scorecard", "Model", "Medium", "Needs review"],
     ["Integration caveats", "Brief", "Medium", "Assumption-heavy"],
   ],
+  "Pricing Package": [
+    ["Pricing test notes", "Research", "High", "Needs review"],
+    ["Package comparison", "Table", "Medium", "Indexed"],
+    ["Competitor pricing clips", "Research", "Medium", "Indexed"],
+    ["Discount caveats", "Memo", "Low", "Assumption-heavy"],
+  ],
+};
+
+const projectSummaryCopy = {
+  "Tegy Launch":
+    "Tegy Launch keeps the GTM motion, product constraints, and source context in one place. Use it to turn scattered inputs into a decision-ready launch output and lock the assumptions that matter.",
+  "Series A Board Pack":
+    "Series A Board Pack gathers the investor narrative, market evidence, and board materials needed for a clean fundraising story. Use it to turn diligence questions into a sharper memo, FAQ, and board-ready narrative.",
+  "Target Fit Screen":
+    "Target Fit Screen compares acquisition targets against the strategic acquirer thesis, capability gaps, and evidence quality. Use it to decide which targets deserve diligence, which should wait, and what assumptions need to be locked before outreach.",
+  "Pricing Package":
+    "Pricing Package holds the plan shape, value metric, and buyer-objection evidence behind the current packaging work. Use it to test willingness-to-pay assumptions before changing tiers, discounts, or conversion messaging.",
 };
 
 const globalVaultSources = [
@@ -1299,6 +1333,12 @@ function setPage(page) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function setProjectDetailMode(open) {
+  const projectsPage = document.querySelector("#projectsPage");
+  if (!projectsPage) return;
+  projectsPage.classList.toggle("projects-detail-mode", open);
+}
+
 function openProjectScopedPage(page) {
   const selectedProject = document.querySelector("#projectDetailTitle")?.textContent.trim();
   if (projectSummaries[selectedProject]) {
@@ -1384,22 +1424,6 @@ function syncResponsiveNavigation() {
   syncIcons();
 }
 
-function setProjectsAccordion(open) {
-  const group = document.querySelector("#projectsNavGroup");
-  const toggle = document.querySelector("#projectsAccordionToggle");
-  const list = document.querySelector("#projectSidebarList");
-  if (!group || !toggle || !list) return;
-
-  group.classList.toggle("projects-open", open);
-  list.hidden = !open;
-  toggle.setAttribute("aria-expanded", open ? "true" : "false");
-  toggle.setAttribute("aria-label", open ? "Collapse projects" : "Expand projects");
-  toggle.title = open ? "Collapse projects" : "Expand projects";
-  toggle.innerHTML = `<i data-lucide="${open ? "chevron-down" : "chevron-right"}"></i>`;
-  window.localStorage.setItem("tegy-projects-open", open ? "true" : "false");
-  syncIcons();
-}
-
 function setActiveChat(button) {
   document.querySelectorAll(".history-chat-row").forEach((row) => row.classList.remove("active"));
   const row = button.closest(".history-chat-row");
@@ -1429,6 +1453,14 @@ function setProjectTabMenu(menuId, triggerId, open) {
   const menu = document.querySelector(menuId);
   const trigger = document.querySelector(triggerId);
   if (!menu || !trigger) return;
+
+  if (open && menu.parentElement?.classList.contains("project-picker")) {
+    const parentRect = menu.parentElement.getBoundingClientRect();
+    const triggerRect = trigger.getBoundingClientRect();
+    menu.style.left = `${Math.max(0, triggerRect.left - parentRect.left)}px`;
+    menu.style.right = "auto";
+    menu.style.minWidth = `${Math.max(220, triggerRect.width)}px`;
+  }
 
   menu.hidden = !open;
   trigger.setAttribute("aria-expanded", open ? "true" : "false");
@@ -1612,11 +1644,15 @@ function updateActiveContextScope() {
 function renderAssistantScope() {
   const projectName = state.assistantProject;
   const project = projectName ? projectSummaries[projectName] : null;
+  document.querySelector(".scope-strip")?.classList.toggle("has-output", Boolean(state.assistantOutput));
 
   document.querySelector("#activeProjectScope").textContent = projectName || "No project selected";
+  const projectTabLabel = document.querySelector("#assistantProjectTabLabel");
+  if (projectTabLabel) projectTabLabel.textContent = projectName || "No project";
   document.querySelector("#activeOutputScope").textContent = state.assistantOutput || "No output selected";
   document.querySelector("#projectVaultChip").textContent = projectName ? `${projectName} Sources` : "Project Sources";
   document.querySelector("#priorProjectChip").textContent = project?.priorProject || "Prior Project";
+  renderAssistantProjectMenu();
   const input = document.querySelector("#promptInput");
   if (input) {
     input.placeholder = getPromptPlaceholder();
@@ -1626,13 +1662,64 @@ function renderAssistantScope() {
   renderRoutingLock();
 }
 
+function renderAssistantProjectMenu() {
+  const projectMenu = document.querySelector("#assistantProjectMenu");
+  if (!projectMenu) return;
+
+  projectMenu.innerHTML = `
+    <label class="assistant-project-search">
+      <i data-lucide="search"></i>
+      <input type="search" placeholder="Search projects" aria-label="Search projects" data-project-search />
+    </label>
+    <div class="assistant-project-list">
+      ${Object.keys(projectSummaries)
+    .map(
+      (project) => `
+        <button class="${state.assistantProject === project ? "active" : ""}" type="button" data-assistant-project="${escapeHtml(project)}">
+          <i data-lucide="folder-git-2"></i>
+          <span>${escapeHtml(project)}</span>
+        </button>
+      `,
+    )
+    .join("")}
+    </div>
+    <button class="assistant-project-add" type="button" data-assistant-project-add>
+      <i data-lucide="folder-plus"></i>
+      <span>Add new project</span>
+      <i data-lucide="chevron-right"></i>
+    </button>
+  `;
+
+  const search = projectMenu.querySelector("[data-project-search]");
+  search?.addEventListener("input", () => {
+    const query = search.value.trim().toLowerCase();
+    projectMenu.querySelectorAll("[data-assistant-project]").forEach((button) => {
+      button.hidden = !button.textContent.toLowerCase().includes(query);
+    });
+  });
+
+  projectMenu.querySelectorAll("[data-assistant-project]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setProjectTabMenu("#assistantProjectMenu", "#assistantProjectTab", false);
+      selectProject(button.dataset.assistantProject, { scopeAssistant: true });
+    });
+  });
+
+  projectMenu.querySelector("[data-assistant-project-add]")?.addEventListener("click", () => {
+    setProjectTabMenu("#assistantProjectMenu", "#assistantProjectTab", false);
+    setPage("projects");
+  });
+
+  syncIcons();
+}
+
 function renderVaultRows() {
   const isProjectScope = state.vaultScope === "project";
   const rows = isProjectScope ? projectVaultSources[state.activeProject] : globalVaultSources;
-  const subtitle = isProjectScope ? `${state.activeProject} Context` : "Global Context";
+  const subtitle = isProjectScope ? `${state.activeProject} sources` : "Global sources";
   const description = isProjectScope
-    ? `Summarize, Compare, Extract ${state.activeProject} Sources`
-    : "Summarize, Compare, Extract Global Context";
+    ? `Sources Tegy can cite for ${state.activeProject}`
+    : "Reusable context Tegy can cite";
 
   document.querySelector("#vaultTitle").textContent = "Vault";
   document.querySelector("#vaultSubtitle").textContent = subtitle;
@@ -1686,8 +1773,8 @@ function renderVaultRows() {
 
   const result = document.querySelector("#vaultResult");
   result.innerHTML = isProjectScope
-    ? `Select an action to work across ${escapeHtml(state.activeProject)} sources.`
-    : "Select an action to work across global context, frameworks, templates, and reusable decisions.";
+    ? `${escapeHtml(state.activeProject)} sources are available as evidence for Copilot runs.`
+    : "Global sources are reusable evidence across projects.";
 }
 
 function setVaultScope(scope) {
@@ -1978,8 +2065,8 @@ function renderArtifacts() {
 
   document.querySelector("#artifactSubtitle").textContent =
     state.artifactScope === "project"
-      ? `${state.activeProject} Outputs`
-      : "All Project Outputs";
+      ? `${state.activeProject} outputs`
+      : "Generated outputs";
   document.querySelector("#artifactProjectTabLabel").textContent = state.activeProject;
   document.querySelector("#artifactProjectTab").classList.toggle("active", state.artifactScope === "project");
   const artifactProjectMenu = document.querySelector("#artifactProjectMenu");
@@ -2018,11 +2105,12 @@ function renderArtifacts() {
   grid.innerHTML = visibleRows
     .map(
       ({ project, title, type, note }) => `
-        <button class="artifact-card ${isSelectedRow({ project, title }) ? "selected" : ""}" data-artifact="${escapeHtml(title)}" data-project="${escapeHtml(project)}">
-          <span>${escapeHtml(type)}</span>
+        <button class="artifact-card output-row ${isSelectedRow({ project, title }) ? "selected" : ""}" data-artifact="${escapeHtml(title)}" data-project="${escapeHtml(project)}" data-note="${escapeHtml(note)}">
           <strong>${escapeHtml(title)}</strong>
+          <small>${escapeHtml(artifactDescriptions[title] || note)}</small>
+          <span>${escapeHtml(project)}</span>
           <em>${escapeHtml(artifactMeta[title]?.status || "Draft")}</em>
-          <small>${state.artifactScope === "all" ? `${escapeHtml(project)} · ` : ""}${escapeHtml(note)}</small>
+          <time datetime="2026-06-05">Jun 5</time>
         </button>
       `,
     )
@@ -2049,7 +2137,8 @@ function renderArtifacts() {
       card.classList.add("selected");
       const artifact = card.dataset.artifact;
       state.selectedArtifactProject = card.dataset.project;
-      updateArtifactPreview(artifact, card.querySelector("small").textContent);
+      updateArtifactPreview(artifact, card.dataset.note || card.querySelector("small").textContent);
+      openArtifact(artifact, card.dataset.project, card.dataset.note || card.querySelector("small").textContent);
     });
   });
 
@@ -2140,12 +2229,16 @@ function getRoutingChoiceLabel(choice = state.assistantLaneChoice) {
 }
 
 function buildRoutingBrief(prompt, laneChoice = state.assistantLaneChoice) {
-  const route = routePrompt(prompt, "auto");
+  const route = routePrompt(prompt, laneChoice);
   const project = state.assistantProject || "the selected project";
   const output = state.assistantOutput || route.output;
   const cleanPrompt = prompt.replace(/\s+/g, " ").trim();
   const shortPrompt = (cleanPrompt.length > 130 ? `${cleanPrompt.slice(0, 130)}...` : cleanPrompt).replace(/[.!?]+$/, "");
-  return `Based on your request, Tegy understands this as: ${shortPrompt}. It will work in ${project}, target ${output}, and ${laneChoice === "auto" ? `auto-route to ${route.lane}` : `use ${getRoutingChoiceLabel(laneChoice)}`}.`;
+  const routingPhrase =
+    laneChoice === "auto"
+      ? `suggests ${route.lane}`
+      : `will use ${getRoutingChoiceLabel(laneChoice)}`;
+  return `Tegy reads this as: ${shortPrompt}. It will work in ${project}, ${routingPhrase}, and produce a ${output.toLowerCase()} unless a decision point needs to be locked first.`;
 }
 
 function renderRoutingLock() {
@@ -2258,7 +2351,7 @@ function getRoutingPreludeState(card) {
   const laneChoice = card.dataset.laneChoice || "auto";
   return {
     laneChoice,
-    depth: card.dataset.depth || state.assistantDepth,
+    depth: state.assistantDepth,
     reasoning: card.dataset.reasoning || state.assistantReasoning,
     prompt: card.dataset.prompt || "",
   };
@@ -2266,7 +2359,7 @@ function getRoutingPreludeState(card) {
 
 function getContextCountLabel() {
   const contexts = getActiveContexts();
-  return contexts.length ? `${contexts.length} selected` : "No sources selected";
+  return contexts.length ? `${contexts.length} selected` : state.assistantProject ? "Project context" : "No sources selected";
 }
 
 function renderRoutingPrelude(prompt) {
@@ -2276,13 +2369,13 @@ function renderRoutingPrelude(prompt) {
   return `
     <div class="routing-run-header">
       <div>
-        <p class="eyebrow">Start ritual</p>
-        <h2>Confirm how Tegy should run this</h2>
+        <p class="eyebrow">Tegy can run this</p>
+        <h2 data-routing-title>${escapeHtml(route.lane)} -> ${escapeHtml(outputText)}</h2>
       </div>
-      <span data-routing-status>Best match: ${escapeHtml(route.lane)}</span>
+      <span data-routing-status>${state.assistantLaneChoice === "auto" ? "Suggested route" : "Manual lane"}</span>
     </div>
     <div class="routing-run-brief">
-      <span>1/3</span>
+      <span>So what</span>
       <p data-routing-brief>${escapeHtml(buildRoutingBrief(prompt, state.assistantLaneChoice))}</p>
     </div>
     <div class="routing-run-summary" aria-label="Selected routing scope">
@@ -2290,36 +2383,21 @@ function renderRoutingPrelude(prompt) {
       <span><i data-lucide="file-output"></i>${escapeHtml(outputText)}</span>
       <span><i data-lucide="database"></i>${escapeHtml(getContextCountLabel())}</span>
     </div>
-    <div class="routing-option-grid" aria-label="Lane and agent choice">
+    <div class="routing-option-grid" aria-label="Choose Tegy lane">
       ${getRoutingPreludeOptions()
         .map(
-          ([value, label, detail]) => `
-            <button class="${value === state.assistantLaneChoice ? "selected" : ""}" type="button" data-routing-choice="${escapeHtml(value)}">
-              <span class="routing-option-dot"></span>
+          ([choice, label, description]) => `
+            <button class="${state.assistantLaneChoice === choice ? "selected" : ""}" type="button" data-routing-choice="${escapeHtml(choice)}">
+              <span class="routing-option-dot" aria-hidden="true"></span>
               <strong>${escapeHtml(label)}</strong>
-              <small>${escapeHtml(detail)}</small>
+              <small>${escapeHtml(description)}</small>
             </button>
           `,
         )
         .join("")}
     </div>
-    <div class="routing-setting-locks">
-      <div>
-        <span>Depth</span>
-        <button class="${state.assistantDepth === "Lite" ? "selected" : ""}" type="button" data-routing-depth="Lite">Lite</button>
-        <button class="${state.assistantDepth === "Med" ? "selected" : ""}" type="button" data-routing-depth="Med">Med</button>
-        <button class="${state.assistantDepth === "Heavy" ? "selected" : ""}" type="button" data-routing-depth="Heavy">Heavy</button>
-      </div>
-      <div>
-        <span>Reasoning</span>
-        <button class="${state.assistantReasoning === "Auto" ? "selected" : ""}" type="button" data-routing-reasoning="Auto">Auto</button>
-        <button class="${state.assistantReasoning === "Critic" ? "selected" : ""}" type="button" data-routing-reasoning="Critic">Critic</button>
-        <button class="${state.assistantReasoning === "Waterfall" ? "selected" : ""}" type="button" data-routing-reasoning="Waterfall">Waterfall</button>
-      </div>
-    </div>
     <div class="routing-run-actions">
-      <button class="secondary-button" type="button" data-routing-action="dismiss">Run with defaults</button>
-      <button class="primary-button" type="button" data-routing-action="run"><i data-lucide="play"></i> Run Tegy</button>
+      <button class="primary-button" type="button" data-routing-action="run"><i data-lucide="play"></i> Start analysis</button>
     </div>
   `;
 }
@@ -2328,10 +2406,12 @@ function updateRoutingPrelude(card) {
   const { prompt, laneChoice } = getRoutingPreludeState(card);
   const route = routePrompt(prompt, laneChoice);
   const status = card.querySelector("[data-routing-status]");
+  const title = card.querySelector("[data-routing-title]");
   const brief = card.querySelector("[data-routing-brief]");
   const summary = card.querySelector(".routing-run-summary");
   const outputText = state.assistantOutput || route.output;
-  if (status) status.textContent = `Best match: ${route.lane}`;
+  if (status) status.textContent = laneChoice === "auto" ? "Suggested route" : "Manual lane";
+  if (title) title.textContent = `${route.lane} -> ${outputText}`;
   if (brief) brief.textContent = buildRoutingBrief(prompt, laneChoice);
   if (summary) {
     summary.innerHTML = `
@@ -2344,9 +2424,6 @@ function updateRoutingPrelude(card) {
   card.querySelectorAll("[data-routing-choice]").forEach((button) => {
     button.classList.toggle("selected", button.dataset.routingChoice === laneChoice);
   });
-  card.querySelectorAll("[data-routing-depth]").forEach((button) => {
-    button.classList.toggle("selected", button.dataset.routingDepth === card.dataset.depth);
-  });
   card.querySelectorAll("[data-routing-reasoning]").forEach((button) => {
     button.classList.toggle("selected", button.dataset.routingReasoning === card.dataset.reasoning);
   });
@@ -2358,7 +2435,6 @@ function createRoutingPreludeCard(prompt) {
   card.className = "response-card routing-run-card";
   card.dataset.prompt = prompt;
   card.dataset.laneChoice = state.assistantLaneChoice;
-  card.dataset.depth = state.assistantDepth;
   card.dataset.reasoning = state.assistantReasoning;
   card.innerHTML = renderRoutingPrelude(prompt);
   updateRoutingPrelude(card);
@@ -2369,7 +2445,6 @@ function setRoutingPreludeChoice(button) {
   const card = button.closest(".routing-run-card");
   if (!card || card.classList.contains("locked")) return;
   if (button.dataset.routingChoice) card.dataset.laneChoice = button.dataset.routingChoice;
-  if (button.dataset.routingDepth) card.dataset.depth = button.dataset.routingDepth;
   if (button.dataset.routingReasoning) card.dataset.reasoning = button.dataset.routingReasoning;
   updateRoutingPrelude(card);
 }
@@ -2387,9 +2462,9 @@ function completeRoutingPrelude(card, shouldRun = true) {
     if (!button.dataset.routingAction) button.disabled = true;
   });
   const actions = card.querySelector(".routing-run-actions");
-  if (actions) actions.innerHTML = `<span class="routing-run-locked"><i data-lucide="lock-keyhole"></i> Routing locked</span>`;
+  if (actions) actions.innerHTML = `<span class="routing-run-locked"><i data-lucide="play"></i> Analysis started</span>`;
   const status = card.querySelector("[data-routing-status]");
-  if (status) status.textContent = `Locked: ${routePrompt(prompt, laneChoice).lane}`;
+  if (status) status.textContent = `Running`;
   syncIcons();
   if (shouldRun) appendAgentResponse(prompt, { laneChoice, depth, reasoning }, card);
 }
@@ -2625,6 +2700,7 @@ function renderAgentRun(run, route) {
           )
           .join("")}
       </div>
+      ${renderDecisionCheckpoint(route)}
       <article class="output-preview" hidden>
         <p class="eyebrow">Draft Output</p>
         <h3>${escapeHtml(run.title)}</h3>
@@ -2641,14 +2717,12 @@ function renderAgentRun(run, route) {
           <button type="button" data-run-action="lock-decision"><i data-lucide="shield-check"></i> Lock Decision</button>
         </div>
       </article>
-      ${renderDecisionCheckpoint(route)}
     </section>
   `;
 }
 
 function animateAgentRun(card) {
   const steps = [...card.querySelectorAll(".agent-step")];
-  const preview = card.querySelector(".output-preview");
   const checkpoint = card.querySelector(".dp-checkpoint");
   steps.forEach((step, index) => {
     window.setTimeout(() => {
@@ -2659,13 +2733,23 @@ function animateAgentRun(card) {
       if (index === steps.length - 1) {
         step.classList.add("complete");
         window.setTimeout(() => {
-          if (preview) preview.hidden = false;
           if (checkpoint) checkpoint.hidden = false;
           card.querySelector(".agent-run-header small").textContent = "Ready";
           syncIcons();
         }, 420);
       }
     }, index * 520);
+  });
+}
+
+function revealDraftOutput(card) {
+  const preview = card?.querySelector(".output-preview");
+  if (!preview || preview.hidden === false) return;
+  preview.hidden = false;
+  card.dataset.outputReleased = "true";
+  syncIcons();
+  window.requestAnimationFrame(() => {
+    preview.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
 }
 
@@ -2727,12 +2811,10 @@ function appendAgentResponse(prompt, routing, afterElement = null) {
       <span><i data-lucide="route"></i>${escapeHtml(route.logic)}</span>
       <span><i data-lucide="file-output"></i>${escapeHtml(route.output)}</span>
       <span><i data-lucide="database"></i>${contexts.length ? `${contexts.length} selected` : "No sources selected"}</span>
-      <span><i data-lucide="lock-keyhole"></i>${escapeHtml(getRoutingChoiceLabel(laneChoice))}</span>
       <span><i data-lucide="gauge"></i>${escapeHtml(depth)}</span>
-      <span><i data-lucide="brain-circuit"></i>${escapeHtml(reasoning)}</span>
     </div>
     <p><b>Request:</b> ${escapeHtml(prompt)}</p>
-    <p>${contexts.length ? `Using ${escapeHtml(contextText)}, Tegy is running the lane logic` : "With no context selected, Tegy is running the lane logic"} with ${escapeHtml(depth.toLowerCase())} depth and ${escapeHtml(reasoning.toLowerCase())} reasoning, then building a decision-ready ${escapeHtml(route.output.toLowerCase())}. Routing choice: ${escapeHtml(getRoutingChoiceLabel(laneChoice))}.</p>
+    <p>${contexts.length ? `Using ${escapeHtml(contextText)}, Tegy is running the lane logic` : "With no extra sources selected, Tegy is running the lane logic"} at ${escapeHtml(depth.toLowerCase())} depth, then building a decision-ready ${escapeHtml(route.output.toLowerCase())}.</p>
     ${renderAgentRun(run, route)}
   `;
   if (afterElement?.parentElement === stack) {
@@ -2798,6 +2880,12 @@ function selectProject(projectName, options = {}) {
 
   state.activeProject = projectName;
   document.querySelector("#projectDetailTitle").textContent = projectName;
+  const summaryCopy = document.querySelector("#projectSummaryCopy");
+  if (summaryCopy) {
+    summaryCopy.textContent =
+      projectSummaryCopy[projectName] ||
+      "This project keeps the relevant context, sources, outputs, and decisions together. Use it to run Tegy against a specific strategic matter and preserve what gets learned.";
+  }
   const detailCards = document.querySelectorAll(".detail-grid article");
   const values = [
     ["Company Context", summary.context, summary.contextNote],
@@ -2814,9 +2902,6 @@ function selectProject(projectName, options = {}) {
   });
 
   document.querySelector(".history-card p").textContent = summary.history;
-  document.querySelectorAll(".mini-project").forEach((item) => {
-    item.classList.toggle("active", item.dataset.project === projectName);
-  });
   document.querySelectorAll("[data-project-detail]").forEach((item) => {
     item.classList.toggle("selected", item.dataset.projectDetail === projectName);
   });
@@ -2831,6 +2916,7 @@ function selectProject(projectName, options = {}) {
 
 function lockDecision(card) {
   card.classList.remove("pending");
+  card.classList.remove("default");
   card.classList.add("locked");
   card.querySelector("span").textContent = "Locked";
   const meta = card.querySelector(".decision-meta");
@@ -2843,9 +2929,29 @@ function lockDecision(card) {
     })}</dd>`;
     meta.append(item);
   }
-  const button = card.querySelector("button");
-  if (button) button.remove();
+  const actions = card.querySelector(".decision-actions");
+  if (actions) {
+    actions.innerHTML = `
+      <button class="lock-decision" type="button" disabled>Lock</button>
+      <button class="discard-decision" type="button">Discard</button>
+    `;
+    actions.querySelector(".discard-decision")?.addEventListener("click", () => discardDecision(card));
+  }
   showToast("Decision locked");
+}
+
+function discardDecision(card) {
+  card?.remove();
+  showToast("Decision discarded");
+}
+
+function renderDecisionActions({ locked = false } = {}) {
+  return `
+    <div class="decision-actions">
+      <button class="lock-decision" type="button" ${locked ? "disabled" : ""}>Lock</button>
+      <button class="discard-decision" type="button">Discard</button>
+    </div>
+  `;
 }
 
 function getDecisionCheckpointSelection(panel) {
@@ -2927,10 +3033,11 @@ function addDecisionCheckpointToLog(card, selections, actionLabel) {
       ],
       "decision-meta",
     )}
-    ${isDefault ? "" : '<button class="lock-decision">Lock</button>'}
+    ${renderDecisionActions()}
   `;
 
   article.querySelector(".lock-decision")?.addEventListener("click", () => lockDecision(article));
+  article.querySelector(".discard-decision")?.addEventListener("click", () => discardDecision(article));
   decisionLog.prepend(article);
   card.dataset.checkpointLogged = "true";
 }
@@ -2953,6 +3060,7 @@ function completeDecisionCheckpoint(checkpoint, actionLabel = "Proceed with defa
     summaryNode.textContent = `${summary}. Added to Decision Log for the next lane run.`;
   }
   if (card) addDecisionCheckpointToLog(card, selections, actionLabel);
+  revealDraftOutput(card);
   showToast("Decision checkpoint captured");
   syncIcons();
 }
@@ -3028,10 +3136,11 @@ function addDecisionFromRun(card) {
       ],
       "decision-meta",
     )}
-    <button class="lock-decision">Lock</button>
+    ${renderDecisionActions()}
   `;
 
   article.querySelector(".lock-decision").addEventListener("click", () => lockDecision(article));
+  article.querySelector(".discard-decision").addEventListener("click", () => discardDecision(article));
   decisionLog.prepend(article);
   setPage("decisions");
   showToast("Decision added to log");
@@ -3067,10 +3176,11 @@ function addDecisionFromArtifact() {
       ],
       "decision-meta",
     )}
-    <button class="lock-decision">Lock</button>
+    ${renderDecisionActions()}
   `;
 
   article.querySelector(".lock-decision").addEventListener("click", () => lockDecision(article));
+  article.querySelector(".discard-decision").addEventListener("click", () => discardDecision(article));
   decisionLog.prepend(article);
   setPage("decisions");
   showToast("Decision added to log");
@@ -3154,8 +3264,7 @@ function startAssistantSession(options = {}) {
 function init() {
   setTheme(getPreferredTheme());
   setSidebarCollapsed(window.localStorage.getItem("tegy-sidebar-collapsed") === "true");
-  setProjectsAccordion(window.localStorage.getItem("tegy-projects-open") !== "false");
-  setRecentsOpen(false);
+  setRecentsOpen(true);
   syncResponsiveNavigation();
 
   document.querySelector("#sidebarToggle").addEventListener("click", () => {
@@ -3169,11 +3278,6 @@ function init() {
   });
 
   window.matchMedia?.("(max-width: 620px)").addEventListener("change", syncResponsiveNavigation);
-
-  document.querySelector("#projectsAccordionToggle").addEventListener("click", () => {
-    const toggle = document.querySelector("#projectsAccordionToggle");
-    setProjectsAccordion(toggle.getAttribute("aria-expanded") !== "true");
-  });
 
   document.querySelector("#newChatButton").addEventListener("click", () => {
     startAssistantSession();
@@ -3199,8 +3303,10 @@ function init() {
   document.addEventListener("click", (event) => {
     if (event.target.closest(".assistant-setting-control") || event.target.closest(".setting-picker")) return;
     if (event.target.closest(".project-picker")) return;
+    if (event.target.closest(".composer-project-picker")) return;
     setProjectTabMenu("#vaultProjectMenu", "#vaultProjectTab", false);
     setProjectTabMenu("#artifactProjectMenu", "#artifactProjectTab", false);
+    setProjectTabMenu("#assistantProjectMenu", "#assistantProjectTab", false);
     setSettingPicker("depth", false);
   });
 
@@ -3208,22 +3314,42 @@ function init() {
     if (event.key !== "Escape") return;
     setProjectTabMenu("#vaultProjectMenu", "#vaultProjectTab", false);
     setProjectTabMenu("#artifactProjectMenu", "#artifactProjectTab", false);
+    setProjectTabMenu("#assistantProjectMenu", "#assistantProjectTab", false);
     setSettingPicker("depth", false);
   });
 
   document.querySelector("#vaultProjectTab").addEventListener("click", () => {
+    const willOpen = document.querySelector("#vaultProjectTab").getAttribute("aria-expanded") !== "true";
     state.vaultScope = "project";
     renderVaultRows();
-    const menu = document.querySelector("#vaultProjectMenu");
-    setProjectTabMenu("#vaultProjectMenu", "#vaultProjectTab", menu.hidden);
+    setProjectTabMenu("#vaultProjectMenu", "#vaultProjectTab", willOpen);
   });
 
   document.querySelector("#artifactProjectTab").addEventListener("click", () => {
+    const willOpen = document.querySelector("#artifactProjectTab").getAttribute("aria-expanded") !== "true";
     state.artifactScope = "project";
     state.artifactPage = 1;
     renderArtifacts();
-    const menu = document.querySelector("#artifactProjectMenu");
-    setProjectTabMenu("#artifactProjectMenu", "#artifactProjectTab", menu.hidden);
+    setProjectTabMenu("#artifactProjectMenu", "#artifactProjectTab", willOpen);
+  });
+
+  document.querySelector("#assistantProjectTab").addEventListener("click", () => {
+    const willOpen = document.querySelector("#assistantProjectTab").getAttribute("aria-expanded") !== "true";
+    renderAssistantProjectMenu();
+    setSettingPicker("depth", false);
+    setSettingPicker("reasoning", false);
+    setProjectTabMenu("#assistantProjectMenu", "#assistantProjectTab", willOpen);
+  });
+
+  document.querySelector("#attachFilesButton").addEventListener("click", () => {
+    document.querySelector("#attachmentInput")?.click();
+  });
+
+  document.querySelector("#attachmentInput").addEventListener("change", (event) => {
+    const count = event.target.files?.length || 0;
+    if (!count) return;
+    showToast(count === 1 ? "File attached" : `${count} files attached`);
+    event.target.value = "";
   });
 
   document.querySelectorAll(".history-chat").forEach((button) => {
@@ -3275,20 +3401,14 @@ function init() {
       }
 
       setPage(page);
+      if (page === "projects") setProjectDetailMode(false);
       if (isMobileNav()) setMobileMenu(false);
     });
   });
 
   document.querySelector("#newProjectInline").addEventListener("click", () => {
     document.querySelector("#projectDetailTitle").textContent = "New Tegy Project";
-  });
-
-  document.querySelectorAll(".mini-project[data-project]").forEach((button) => {
-    button.addEventListener("click", () => {
-      selectProject(button.dataset.project);
-      setPage("assistant");
-      if (isMobileNav()) setMobileMenu(false);
-    });
+    setProjectDetailMode(true);
   });
 
   document.querySelectorAll("[data-project-card], [data-project-detail]").forEach((button) => {
@@ -3298,7 +3418,12 @@ function init() {
       button.classList.add("selected");
       selectProject(button.dataset.projectCard || button.dataset.projectDetail);
       if (button.dataset.projectCard) setPage("projects");
+      if (button.dataset.projectDetail) setProjectDetailMode(true);
     });
+  });
+
+  document.querySelector("#projectBackButton")?.addEventListener("click", () => {
+    setProjectDetailMode(false);
   });
 
   document.querySelectorAll("[data-prompt]").forEach((button) => {
@@ -3316,11 +3441,13 @@ function init() {
 
   document.querySelector("#depthToggle").addEventListener("click", () => {
     const picker = document.querySelector("#depthPicker");
+    setProjectTabMenu("#assistantProjectMenu", "#assistantProjectTab", false);
     setSettingPicker("depth", picker.hidden);
   });
 
   document.querySelector("#reasoningToggle").addEventListener("click", () => {
     const picker = document.querySelector("#reasoningPicker");
+    setProjectTabMenu("#assistantProjectMenu", "#assistantProjectTab", false);
     setSettingPicker("reasoning", picker.hidden);
   });
 
@@ -3447,8 +3574,6 @@ function init() {
     );
   });
 
-  document.querySelector("#artifactLockButton").addEventListener("click", addDecisionFromArtifact);
-
   document.querySelectorAll(".vault-action").forEach((button) => {
     button.addEventListener("click", () => {
       const scopeLabel = state.vaultScope === "project" ? "project sources" : "global context";
@@ -3484,6 +3609,9 @@ function init() {
 
   document.querySelectorAll(".lock-decision").forEach((button) => {
     button.addEventListener("click", () => lockDecision(button.closest(".decision-card")));
+  });
+  document.querySelectorAll(".discard-decision").forEach((button) => {
+    button.addEventListener("click", () => discardDecision(button.closest(".decision-card")));
   });
 
   setAgent("claude");
