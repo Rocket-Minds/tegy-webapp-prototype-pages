@@ -320,6 +320,59 @@
               </button>
             </div>
 
+            <section class="routing-lock-card" id="routingLockCard" aria-live="polite" hidden>
+              <div class="routing-lock-header">
+                <div>
+                  <p class="eyebrow">Start ritual</p>
+                  <h2>Lock routing choices</h2>
+                </div>
+                <span id="routingLockStatus">Auto ready</span>
+              </div>
+              <div class="routing-brief">
+                <span>1/3</span>
+                <p id="routingBriefText">Start typing and Tegy will paraphrase the task before it runs.</p>
+              </div>
+              <div class="routing-lock-grid" aria-label="Lane and agent choice">
+                <button class="selected" type="button" data-lane-choice="auto">
+                  <strong>Auto router</strong>
+                  <span>Best lane and agent based on request and output.</span>
+                </button>
+                <button type="button" data-lane-choice="Business Strategy">
+                  <strong>Business strategy</strong>
+                  <span>Market, positioning, tradeoffs, decision memo.</span>
+                </button>
+                <button type="button" data-lane-choice="Product Management">
+                  <strong>Product</strong>
+                  <span>Segmentation, roadmap, PRD, pricing shape.</span>
+                </button>
+                <button type="button" data-lane-choice="GTM Strategy">
+                  <strong>GTM</strong>
+                  <span>Wedge, motion, funnel, channels, launch plan.</span>
+                </button>
+                <button type="button" data-lane-choice="M&A Target Fit">
+                  <strong>M&A fit</strong>
+                  <span>Thesis, target screen, diligence gaps.</span>
+                </button>
+                <button type="button" data-lane-choice="all-three">
+                  <strong>Full waterfall</strong>
+                  <span>Business -> Product -> GTM with checkpoints.</span>
+                </button>
+              </div>
+              <div class="routing-choice-row" aria-label="Depth and reasoning locks">
+                <button type="button" data-preflight-depth="Lite">Lite</button>
+                <button type="button" data-preflight-depth="Med">Med</button>
+                <button class="selected" type="button" data-preflight-depth="Heavy">Heavy</button>
+                <span aria-hidden="true"></span>
+                <button class="selected" type="button" data-preflight-reasoning="Auto">Auto</button>
+                <button type="button" data-preflight-reasoning="Critic">Critic</button>
+                <button type="button" data-preflight-reasoning="Waterfall">Waterfall</button>
+              </div>
+              <div class="routing-lock-actions">
+                <button class="secondary-button" id="hideRoutingLock" type="button">Hide</button>
+                <button class="primary-button" id="lockRoutingChoices" type="button">Lock choices</button>
+              </div>
+            </section>
+
             <div class="context-source-panel" aria-label="Copilot context sources">
               <div class="context-source-header">
                 <span>Context</span>

@@ -2,6 +2,7 @@ const state = {
   activeProject: "Tegy Launch",
   assistantProject: "Tegy Launch",
   assistantOutput: null,
+  assistantLaneChoice: "auto",
   vaultScope: "global",
   artifactScope: "all",
   artifactType: "all",
@@ -10,6 +11,7 @@ const state = {
   selectedArtifactProject: "Tegy Launch",
   assistantDepth: "Heavy",
   assistantReasoning: "Auto",
+  assistantChoicesLocked: false,
   chatStarted: false,
 };
 
@@ -1621,6 +1623,7 @@ function renderAssistantScope() {
   }
   updateContextSourceAvailability();
   updateActiveContextScope();
+  renderRoutingLock();
 }
 
 function renderVaultRows() {
@@ -2137,12 +2140,94 @@ function renderAssistantSettings() {
   });
 }
 
+function getManualLaneRoute(choice) {
+  if (!choice || choice === "auto") return null;
+  if (choice === "all-three") {
+    return {
+      lane: "Strategy Waterfall",
+      agent: "Strategy orchestrator",
+      output: state.assistantOutput || "Strategy synthesis memo",
+      logic: "Business Strategy -> Product Management -> GTM Strategy",
+      template: "Business Strategy",
+      keywords: [],
+    };
+  }
+
+  return routingLanes.find((route) => route.lane === choice || route.template === choice) || null;
+}
+
+function getRoutingChoiceLabel(choice = state.assistantLaneChoice) {
+  if (choice === "auto") return "Auto router";
+  if (choice === "all-three") return "Full waterfall";
+  return choice;
+}
+
+function buildRoutingBrief(prompt) {
+  const route = routePrompt(prompt, "auto");
+  const project = state.assistantProject || "the selected project";
+  const output = state.assistantOutput || route.output;
+  const cleanPrompt = prompt.replace(/\s+/g, " ").trim();
+  const shortPrompt = (cleanPrompt.length > 130 ? `${cleanPrompt.slice(0, 130)}...` : cleanPrompt).replace(/[.!?]+$/, "");
+  return `Based on your request, Tegy understands this as: ${shortPrompt}. It will work in ${project}, target ${output}, and ${state.assistantLaneChoice === "auto" ? `auto-route to ${route.lane}` : `use ${getRoutingChoiceLabel()}`}.`;
+}
+
+function renderRoutingLock() {
+  const card = document.querySelector("#routingLockCard");
+  const input = document.querySelector("#promptInput");
+  if (!card || !input) return;
+
+  const prompt = input.value.trim();
+  if (!prompt) {
+    card.hidden = true;
+    state.assistantChoicesLocked = false;
+    return;
+  }
+
+  const route = routePrompt(prompt, state.assistantLaneChoice);
+  const status = document.querySelector("#routingLockStatus");
+  const brief = document.querySelector("#routingBriefText");
+  card.hidden = false;
+  card.classList.toggle("locked", state.assistantChoicesLocked);
+  card.classList.toggle("needs-lock", !state.assistantChoicesLocked);
+  if (status) {
+    status.textContent = state.assistantChoicesLocked
+      ? `Locked: ${getRoutingChoiceLabel()}`
+      : `Will route: ${route.lane}`;
+  }
+  if (brief) brief.textContent = buildRoutingBrief(prompt);
+
+  document.querySelectorAll("[data-lane-choice]").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.laneChoice === state.assistantLaneChoice);
+  });
+
+  document.querySelectorAll("[data-preflight-depth]").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.preflightDepth === state.assistantDepth);
+  });
+
+  document.querySelectorAll("[data-preflight-reasoning]").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.preflightReasoning === state.assistantReasoning);
+  });
+}
+
+function resetRoutingLock() {
+  state.assistantChoicesLocked = false;
+  renderRoutingLock();
+}
+
+function lockRoutingChoices() {
+  const input = document.querySelector("#promptInput");
+  if (!input?.value.trim()) return;
+  state.assistantChoicesLocked = true;
+  renderRoutingLock();
+}
+
 function selectOutput(output) {
   state.assistantOutput = output;
   document.querySelectorAll("#lanePicker [data-output]").forEach((button) => {
     button.classList.toggle("selected", button.dataset.output === output);
   });
   renderAssistantScope();
+  resetRoutingLock();
   setLanePicker(false);
 }
 
@@ -2151,9 +2236,12 @@ function sendPromptToAssistant(prompt) {
   setLanePicker(false);
   const input = document.querySelector("#promptInput");
   input.value = prompt;
+  state.assistantChoicesLocked = true;
+  renderRoutingLock();
   addResponse(prompt);
   input.value = "";
   resizePromptInput();
+  renderRoutingLock();
 }
 
 function getProjectDefaultRoute() {
@@ -2163,14 +2251,49 @@ function getProjectDefaultRoute() {
   return lane || routingLanes.at(-1);
 }
 
-function routePrompt(prompt) {
+function getPromptIntentRoute(normalizedPrompt) {
+  const intentRules = [
+    {
+      phrases: ["business strategy memo", "strategy memo", "decision memo", "strategic decision", "market strategy"],
+      match: (route) => route.lane === "Business Strategy" && route.output === "Segment decision memo",
+    },
+    {
+      phrases: ["product strategy", "roadmap rationale", "roadmap", "prd", "product memo"],
+      match: (route) => route.lane === "Product Management",
+    },
+    {
+      phrases: ["gtm", "go-to-market", "launch checklist", "channel plan", "demand plan"],
+      match: (route) => route.lane === "GTM Strategy",
+    },
+    {
+      phrases: ["investor memo", "investment thesis", "ic memo", "board memo"],
+      match: (route) => route.template === "Investor Narrative",
+    },
+    {
+      phrases: ["target fit", "target-fit", "screening scorecard", "acquisition screen", "m&a"],
+      match: (route) => route.lane === "M&A Target Fit",
+    },
+  ];
+
+  const rule = intentRules.find(({ phrases }) =>
+    phrases.some((phrase) => normalizedPrompt.includes(phrase)),
+  );
+  return rule ? routingLanes.find(rule.match) : null;
+}
+
+function routePrompt(prompt, laneChoice = state.assistantLaneChoice) {
   const normalized = prompt.toLowerCase();
+  const manualRoute = getManualLaneRoute(laneChoice);
+  if (manualRoute) return manualRoute;
+
   const selectedOutputRoute = state.assistantOutput
     ? routingLanes.find((lane) => lane.output === state.assistantOutput)
     : null;
+  const intentRoute = getPromptIntentRoute(normalized);
 
   return (
     selectedOutputRoute ||
+    intentRoute ||
     routingLanes.find((lane) => lane.keywords.some((keyword) => normalized.includes(keyword))) ||
     getProjectDefaultRoute()
   );
@@ -2289,11 +2412,12 @@ function addResponse(prompt) {
       <span><i data-lucide="route"></i>${escapeHtml(route.logic)}</span>
       <span><i data-lucide="file-output"></i>${escapeHtml(route.output)}</span>
       <span><i data-lucide="database"></i>${contexts.length ? `${contexts.length} selected` : "No sources selected"}</span>
+      <span><i data-lucide="lock-keyhole"></i>${escapeHtml(getRoutingChoiceLabel())}</span>
       <span><i data-lucide="gauge"></i>${escapeHtml(state.assistantDepth)}</span>
       <span><i data-lucide="brain-circuit"></i>${escapeHtml(state.assistantReasoning)}</span>
     </div>
     <p><b>Request:</b> ${escapeHtml(prompt)}</p>
-    <p>${contexts.length ? `Using ${escapeHtml(contextText)}, Tegy is running the lane logic` : "With no context selected, Tegy is running the lane logic"} with ${escapeHtml(state.assistantDepth.toLowerCase())} depth and ${escapeHtml(state.assistantReasoning.toLowerCase())} reasoning, then building a decision-ready ${escapeHtml(route.output.toLowerCase())}.</p>
+    <p>${contexts.length ? `Using ${escapeHtml(contextText)}, Tegy is running the lane logic` : "With no context selected, Tegy is running the lane logic"} with ${escapeHtml(state.assistantDepth.toLowerCase())} depth and ${escapeHtml(state.assistantReasoning.toLowerCase())} reasoning, then building a decision-ready ${escapeHtml(route.output.toLowerCase())}. Routing choice: ${escapeHtml(getRoutingChoiceLabel())}.</p>
     ${renderAgentRun(run)}
   `;
   stack.append(userCard, card);
@@ -2561,6 +2685,8 @@ function init() {
     setChatMode(false);
     state.assistantProject = getDefaultProjectName();
     state.assistantOutput = null;
+    state.assistantLaneChoice = "auto";
+    state.assistantChoicesLocked = false;
     document.querySelectorAll("#lanePicker [data-output]").forEach((button) => button.classList.remove("selected"));
     document.querySelectorAll(".source-chip").forEach((chip) => setSourceChipActive(chip, false));
     renderAssistantScope();
@@ -2570,6 +2696,7 @@ function init() {
       input.placeholder = getPromptPlaceholder();
       input.focus();
     }
+    renderRoutingLock();
     setPage("assistant");
   });
 
@@ -2712,7 +2839,9 @@ function init() {
   document.querySelectorAll("[data-depth]").forEach((button) => {
     button.addEventListener("click", () => {
       state.assistantDepth = button.dataset.depth;
+      state.assistantChoicesLocked = false;
       renderAssistantSettings();
+      renderRoutingLock();
       setSettingPicker("depth", false);
     });
   });
@@ -2720,12 +2849,50 @@ function init() {
   document.querySelectorAll("[data-reasoning]").forEach((button) => {
     button.addEventListener("click", () => {
       state.assistantReasoning = button.dataset.reasoning;
+      state.assistantChoicesLocked = false;
       renderAssistantSettings();
+      renderRoutingLock();
       setSettingPicker("reasoning", false);
     });
   });
 
-  document.querySelector("#promptInput").addEventListener("input", resizePromptInput);
+  document.querySelectorAll("[data-lane-choice]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.assistantLaneChoice = button.dataset.laneChoice;
+      state.assistantChoicesLocked = false;
+      renderRoutingLock();
+    });
+  });
+
+  document.querySelectorAll("[data-preflight-depth]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.assistantDepth = button.dataset.preflightDepth;
+      state.assistantChoicesLocked = false;
+      renderAssistantSettings();
+      renderRoutingLock();
+    });
+  });
+
+  document.querySelectorAll("[data-preflight-reasoning]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.assistantReasoning = button.dataset.preflightReasoning;
+      state.assistantChoicesLocked = false;
+      renderAssistantSettings();
+      renderRoutingLock();
+    });
+  });
+
+  document.querySelector("#lockRoutingChoices").addEventListener("click", lockRoutingChoices);
+  document.querySelector("#hideRoutingLock").addEventListener("click", () => {
+    const card = document.querySelector("#routingLockCard");
+    if (card) card.hidden = true;
+  });
+
+  document.querySelector("#promptInput").addEventListener("input", () => {
+    resizePromptInput();
+    state.assistantChoicesLocked = false;
+    renderRoutingLock();
+  });
 
   document.querySelector("#promptInput").addEventListener("keydown", (event) => {
     if (event.key !== "Enter" || event.shiftKey) return;
@@ -2738,9 +2905,13 @@ function init() {
     const input = document.querySelector("#promptInput");
     const prompt = input.value.trim();
     if (!prompt) return;
+    if (!state.assistantChoicesLocked) {
+      lockRoutingChoices();
+    }
     addResponse(prompt);
     input.value = "";
     resizePromptInput();
+    renderRoutingLock();
   });
 
   document.querySelector("#conversationStack").addEventListener("click", (event) => {
@@ -2765,6 +2936,7 @@ function init() {
       if (chip.disabled) return;
       setSourceChipActive(chip, !chip.classList.contains("active"));
       updateActiveContextScope();
+      renderRoutingLock();
     });
   });
 

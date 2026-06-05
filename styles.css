@@ -873,6 +873,141 @@ svg {
   font-size: 11px;
 }
 
+.routing-lock-card {
+  display: grid;
+  gap: 10px;
+  width: min(760px, 100%);
+  margin: 10px auto 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.routing-lock-card[hidden] {
+  display: none;
+}
+
+.routing-lock-header,
+.routing-lock-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.routing-lock-header h2 {
+  margin: 1px 0 0;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.routing-lock-header > span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.routing-lock-card.locked .routing-lock-header > span {
+  border-color: #d8d0c6;
+  color: var(--brand);
+}
+
+.routing-brief {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid #eee9e3;
+  border-radius: 4px;
+  background: #fbfbfa;
+}
+
+.routing-brief span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 22px;
+  border-radius: 999px;
+  background: #f4efe3;
+  color: var(--brand);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.routing-brief p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.routing-lock-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.routing-lock-grid button,
+.routing-choice-row button {
+  border: 1px solid #eee9e3;
+  border-radius: 4px;
+  background: #fbfbfa;
+  color: var(--ink);
+  text-align: left;
+}
+
+.routing-lock-grid button {
+  display: grid;
+  gap: 3px;
+  min-height: 66px;
+  padding: 9px;
+}
+
+.routing-lock-grid button:hover,
+.routing-lock-grid button.selected,
+.routing-choice-row button:hover,
+.routing-choice-row button.selected {
+  border-color: #d8d0c6;
+  background: #ffffff;
+}
+
+.routing-lock-grid strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.routing-lock-grid span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.routing-choice-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) 8px repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.routing-choice-row button {
+  min-height: 30px;
+  padding: 0 9px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.routing-lock-actions {
+  justify-content: flex-end;
+}
+
 .composer {
   overflow: hidden;
   border: 1px solid #eeeae5;
@@ -988,6 +1123,11 @@ svg {
   order: 3;
   margin-top: auto;
   margin-bottom: 6px;
+}
+
+.chat-mode .routing-lock-card {
+  order: 3;
+  margin-top: 4px;
 }
 
 .context-source-header {
@@ -2607,6 +2747,7 @@ h2 {
 :root[data-theme="dark"] .composer,
 :root[data-theme="dark"] .lane-picker,
 :root[data-theme="dark"] .setting-picker,
+:root[data-theme="dark"] .routing-lock-card,
 :root[data-theme="dark"] .panel,
 :root[data-theme="dark"] .project-card,
 :root[data-theme="dark"] .artifact-card,
@@ -2638,6 +2779,9 @@ h2 {
 
 :root[data-theme="dark"] .lane-picker button,
 :root[data-theme="dark"] .setting-picker button,
+:root[data-theme="dark"] .routing-lock-grid button,
+:root[data-theme="dark"] .routing-choice-row button,
+:root[data-theme="dark"] .routing-brief,
 :root[data-theme="dark"] .workflow-card,
 :root[data-theme="dark"] .source-chip:not(.active),
 :root[data-theme="dark"] .vault-scope,
@@ -2665,6 +2809,10 @@ h2 {
 :root[data-theme="dark"] .lane-picker button:hover,
 :root[data-theme="dark"] .setting-picker button.selected,
 :root[data-theme="dark"] .setting-picker button:hover,
+:root[data-theme="dark"] .routing-lock-grid button.selected,
+:root[data-theme="dark"] .routing-lock-grid button:hover,
+:root[data-theme="dark"] .routing-choice-row button.selected,
+:root[data-theme="dark"] .routing-choice-row button:hover,
 :root[data-theme="dark"] .filter-chip.active,
 :root[data-theme="dark"] .filter-chip:hover,
 :root[data-theme="dark"] .source-table button.selected,
@@ -2905,11 +3053,17 @@ h2 {
   .decision-row,
   .detail-grid,
   .lane-picker,
+  .routing-lock-grid,
+  .routing-choice-row,
   .workflow-grid,
   .artifact-grid,
   .library-grid,
   .decision-log {
     grid-template-columns: 1fr;
+  }
+
+  .routing-choice-row span {
+    display: none;
   }
 }
 
