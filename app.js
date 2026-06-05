@@ -1836,28 +1836,6 @@ function getArtifactFrontmatterRows(title, project, detail) {
   ];
 }
 
-function renderArtifactFrontmatter(title, project, detail) {
-  const rows = getArtifactFrontmatterRows(title, project, detail);
-  const artifact = rows.find(([label]) => label === "artifact")?.[1] || slugify(title);
-  return `
-    <section class="artifact-frontmatter" aria-label="Generated output metadata">
-      <div class="artifact-file-path">output/${slugify(project)}/${artifact}.md</div>
-      <dl>
-        ${rows
-          .map(
-            ([label, value]) => `
-              <div>
-                <dt>${escapeHtml(label)}</dt>
-                <dd>${escapeHtml(value)}</dd>
-              </div>
-            `,
-          )
-          .join("")}
-      </dl>
-    </section>
-  `;
-}
-
 function renderArtifactTable(table) {
   if (!Array.isArray(table) || !table.length) return "";
   return `
@@ -1928,7 +1906,6 @@ function renderArtifactDetail(title, project, fallbackNote = "") {
     .map((source) => `<li>${escapeHtml(source.trim())}</li>`)
     .join("");
   document.querySelector("#artifactDetailSections").innerHTML =
-    renderArtifactFrontmatter(title, resolvedProject, detail) +
     detail.sections.map((section) => renderArtifactSection(section)).join("");
 }
 
