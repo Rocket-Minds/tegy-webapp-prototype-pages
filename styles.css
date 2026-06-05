@@ -1008,6 +1008,201 @@ svg {
   justify-content: flex-end;
 }
 
+.routing-run-card {
+  display: grid;
+  gap: 12px;
+}
+
+.routing-run-header,
+.routing-run-actions,
+.routing-run-summary,
+.routing-setting-locks,
+.routing-setting-locks > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.routing-run-header {
+  justify-content: space-between;
+}
+
+.routing-run-header h2 {
+  margin: 1px 0 0;
+  font-size: 17px;
+  line-height: 1.2;
+}
+
+.routing-run-header > span,
+.routing-run-locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.routing-run-card.locked .routing-run-header > span,
+.routing-run-locked {
+  border-color: #dacdc0;
+  color: var(--brand);
+}
+
+.routing-run-brief {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fbfbfa;
+}
+
+.routing-run-brief > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 24px;
+  border-radius: 999px;
+  background: #fff4dd;
+  color: #b28321;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.routing-run-brief p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.routing-run-summary {
+  flex-wrap: wrap;
+}
+
+.routing-run-summary span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 25px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fbfbfa;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.routing-option-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.routing-option-grid button {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 8px;
+  align-items: start;
+  min-height: 66px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fbfbfa;
+  color: var(--ink);
+  text-align: left;
+}
+
+.routing-option-grid button:hover,
+.routing-option-grid button.selected {
+  border-color: var(--line-strong);
+  background: #ffffff;
+}
+
+.routing-option-grid button:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.routing-option-dot {
+  width: 9px;
+  height: 9px;
+  margin-top: 4px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+}
+
+.routing-option-grid button.selected .routing-option-dot {
+  border-color: var(--brand);
+  background: var(--brand);
+}
+
+.routing-option-grid strong {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.routing-option-grid small {
+  grid-column: 2;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.routing-setting-locks {
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.routing-setting-locks > div {
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.routing-setting-locks span {
+  color: var(--soft);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.routing-setting-locks button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fbfbfa;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.routing-setting-locks button:hover,
+.routing-setting-locks button.selected {
+  border-color: var(--line-strong);
+  background: #ffffff;
+}
+
+.routing-setting-locks button:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.routing-run-actions {
+  justify-content: flex-end;
+}
+
 .composer {
   overflow: hidden;
   border: 1px solid #eeeae5;
@@ -2891,6 +3086,7 @@ h2 {
 :root[data-theme="dark"] .history-card,
 :root[data-theme="dark"] .response-card,
 :root[data-theme="dark"] .message-card,
+:root[data-theme="dark"] .routing-run-card,
 :root[data-theme="dark"] .result-box,
 :root[data-theme="dark"] .account-menu,
 :root[data-theme="dark"] .search-field,
@@ -2911,7 +3107,10 @@ h2 {
 :root[data-theme="dark"] .setting-picker button,
 :root[data-theme="dark"] .routing-lock-grid button,
 :root[data-theme="dark"] .routing-choice-row button,
+:root[data-theme="dark"] .routing-option-grid button,
+:root[data-theme="dark"] .routing-setting-locks button,
 :root[data-theme="dark"] .routing-brief,
+:root[data-theme="dark"] .routing-run-brief,
 :root[data-theme="dark"] .dp-option-list button,
 :root[data-theme="dark"] .dp-other-input,
 :root[data-theme="dark"] .workflow-card,
@@ -2945,6 +3144,10 @@ h2 {
 :root[data-theme="dark"] .routing-lock-grid button:hover,
 :root[data-theme="dark"] .routing-choice-row button.selected,
 :root[data-theme="dark"] .routing-choice-row button:hover,
+:root[data-theme="dark"] .routing-option-grid button.selected,
+:root[data-theme="dark"] .routing-option-grid button:hover,
+:root[data-theme="dark"] .routing-setting-locks button.selected,
+:root[data-theme="dark"] .routing-setting-locks button:hover,
 :root[data-theme="dark"] .dp-option-list button.selected,
 :root[data-theme="dark"] .dp-option-list button:hover,
 :root[data-theme="dark"] .filter-chip.active,
@@ -2966,6 +3169,7 @@ h2 {
 :root[data-theme="dark"] .project-tab-menu,
 :root[data-theme="dark"] .copy-button,
 :root[data-theme="dark"] .output-actions button,
+:root[data-theme="dark"] .routing-run-summary span,
 :root[data-theme="dark"] .dp-checkpoint-actions button,
 :root[data-theme="dark"] .dp-checkpoint-complete button,
 :root[data-theme="dark"] .dp-option-list kbd,
@@ -2990,6 +3194,11 @@ h2 {
 }
 
 :root[data-theme="dark"] .dp-checkpoint-header > span {
+  background: rgba(204, 163, 47, 0.16);
+  color: #d9b850;
+}
+
+:root[data-theme="dark"] .routing-run-brief > span {
   background: rgba(204, 163, 47, 0.16);
   color: #d9b850;
 }
@@ -3196,6 +3405,7 @@ h2 {
   .detail-grid,
   .lane-picker,
   .routing-lock-grid,
+  .routing-option-grid,
   .routing-choice-row,
   .workflow-grid,
   .artifact-grid,
@@ -3574,6 +3784,30 @@ h2 {
     max-width: 100%;
     min-height: 30px;
     white-space: normal;
+  }
+
+  .routing-run-header,
+  .routing-setting-locks {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .routing-run-header > span {
+    white-space: normal;
+  }
+
+  .routing-option-grid small {
+    white-space: normal;
+  }
+
+  .routing-run-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .routing-run-actions button {
+    justify-content: center;
+    min-height: 38px;
   }
 
   .agent-step {

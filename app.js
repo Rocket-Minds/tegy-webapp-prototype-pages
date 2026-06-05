@@ -2139,51 +2139,18 @@ function getRoutingChoiceLabel(choice = state.assistantLaneChoice) {
   return choice;
 }
 
-function buildRoutingBrief(prompt) {
+function buildRoutingBrief(prompt, laneChoice = state.assistantLaneChoice) {
   const route = routePrompt(prompt, "auto");
   const project = state.assistantProject || "the selected project";
   const output = state.assistantOutput || route.output;
   const cleanPrompt = prompt.replace(/\s+/g, " ").trim();
   const shortPrompt = (cleanPrompt.length > 130 ? `${cleanPrompt.slice(0, 130)}...` : cleanPrompt).replace(/[.!?]+$/, "");
-  return `Based on your request, Tegy understands this as: ${shortPrompt}. It will work in ${project}, target ${output}, and ${state.assistantLaneChoice === "auto" ? `auto-route to ${route.lane}` : `use ${getRoutingChoiceLabel()}`}.`;
+  return `Based on your request, Tegy understands this as: ${shortPrompt}. It will work in ${project}, target ${output}, and ${laneChoice === "auto" ? `auto-route to ${route.lane}` : `use ${getRoutingChoiceLabel(laneChoice)}`}.`;
 }
 
 function renderRoutingLock() {
   const card = document.querySelector("#routingLockCard");
-  const input = document.querySelector("#promptInput");
-  if (!card || !input) return;
-
-  const prompt = input.value.trim();
-  if (!prompt) {
-    card.hidden = true;
-    state.assistantChoicesLocked = false;
-    return;
-  }
-
-  const route = routePrompt(prompt, state.assistantLaneChoice);
-  const status = document.querySelector("#routingLockStatus");
-  const brief = document.querySelector("#routingBriefText");
-  card.hidden = false;
-  card.classList.toggle("locked", state.assistantChoicesLocked);
-  card.classList.toggle("needs-lock", !state.assistantChoicesLocked);
-  if (status) {
-    status.textContent = state.assistantChoicesLocked
-      ? `Locked: ${getRoutingChoiceLabel()}`
-      : `Will route: ${route.lane}`;
-  }
-  if (brief) brief.textContent = buildRoutingBrief(prompt);
-
-  document.querySelectorAll("[data-lane-choice]").forEach((button) => {
-    button.classList.toggle("selected", button.dataset.laneChoice === state.assistantLaneChoice);
-  });
-
-  document.querySelectorAll("[data-preflight-depth]").forEach((button) => {
-    button.classList.toggle("selected", button.dataset.preflightDepth === state.assistantDepth);
-  });
-
-  document.querySelectorAll("[data-preflight-reasoning]").forEach((button) => {
-    button.classList.toggle("selected", button.dataset.preflightReasoning === state.assistantReasoning);
-  });
+  if (card) card.hidden = true;
 }
 
 function resetRoutingLock() {
@@ -2192,8 +2159,6 @@ function resetRoutingLock() {
 }
 
 function lockRoutingChoices() {
-  const input = document.querySelector("#promptInput");
-  if (!input?.value.trim()) return;
   state.assistantChoicesLocked = true;
   renderRoutingLock();
 }
@@ -2212,13 +2177,11 @@ function sendPromptToAssistant(prompt) {
   setPage("assistant");
   setLanePicker(false);
   const input = document.querySelector("#promptInput");
-  input.value = prompt;
-  state.assistantChoicesLocked = true;
-  renderRoutingLock();
   addResponse(prompt);
-  input.value = "";
-  resizePromptInput();
-  renderRoutingLock();
+  if (input) {
+    input.value = "";
+    resizePromptInput();
+  }
 }
 
 function getProjectDefaultRoute() {
@@ -2278,6 +2241,157 @@ function routePrompt(prompt, laneChoice = state.assistantLaneChoice) {
 
 function getLaneRun(route) {
   return laneRunTemplates[route.template || route.lane] || laneRunTemplates["Business Strategy"];
+}
+
+function getRoutingPreludeOptions() {
+  return [
+    ["auto", "Auto router", "Let Tegy choose the best lane and agent from the request."],
+    ["Business Strategy", "Business strategy", "Market, positioning, tradeoffs, decision memo."],
+    ["Product Management", "Product", "Segmentation, roadmap, PRD, pricing shape."],
+    ["GTM Strategy", "GTM", "Wedge, motion, funnel, channels, launch plan."],
+    ["M&A Target Fit", "M&A fit", "Thesis, target screen, diligence gaps."],
+    ["all-three", "Full waterfall", "Business -> Product -> GTM with checkpoints."],
+  ];
+}
+
+function getRoutingPreludeState(card) {
+  const laneChoice = card.dataset.laneChoice || "auto";
+  return {
+    laneChoice,
+    depth: card.dataset.depth || state.assistantDepth,
+    reasoning: card.dataset.reasoning || state.assistantReasoning,
+    prompt: card.dataset.prompt || "",
+  };
+}
+
+function getContextCountLabel() {
+  const contexts = getActiveContexts();
+  return contexts.length ? `${contexts.length} selected` : "No sources selected";
+}
+
+function renderRoutingPrelude(prompt) {
+  const route = routePrompt(prompt, state.assistantLaneChoice);
+  const projectText = state.assistantProject || "No project selected";
+  const outputText = state.assistantOutput || route.output;
+  return `
+    <div class="routing-run-header">
+      <div>
+        <p class="eyebrow">Start ritual</p>
+        <h2>Confirm how Tegy should run this</h2>
+      </div>
+      <span data-routing-status>Best match: ${escapeHtml(route.lane)}</span>
+    </div>
+    <div class="routing-run-brief">
+      <span>1/3</span>
+      <p data-routing-brief>${escapeHtml(buildRoutingBrief(prompt, state.assistantLaneChoice))}</p>
+    </div>
+    <div class="routing-run-summary" aria-label="Selected routing scope">
+      <span><i data-lucide="folder-check"></i>${escapeHtml(projectText)}</span>
+      <span><i data-lucide="file-output"></i>${escapeHtml(outputText)}</span>
+      <span><i data-lucide="database"></i>${escapeHtml(getContextCountLabel())}</span>
+    </div>
+    <div class="routing-option-grid" aria-label="Lane and agent choice">
+      ${getRoutingPreludeOptions()
+        .map(
+          ([value, label, detail]) => `
+            <button class="${value === state.assistantLaneChoice ? "selected" : ""}" type="button" data-routing-choice="${escapeHtml(value)}">
+              <span class="routing-option-dot"></span>
+              <strong>${escapeHtml(label)}</strong>
+              <small>${escapeHtml(detail)}</small>
+            </button>
+          `,
+        )
+        .join("")}
+    </div>
+    <div class="routing-setting-locks">
+      <div>
+        <span>Depth</span>
+        <button class="${state.assistantDepth === "Lite" ? "selected" : ""}" type="button" data-routing-depth="Lite">Lite</button>
+        <button class="${state.assistantDepth === "Med" ? "selected" : ""}" type="button" data-routing-depth="Med">Med</button>
+        <button class="${state.assistantDepth === "Heavy" ? "selected" : ""}" type="button" data-routing-depth="Heavy">Heavy</button>
+      </div>
+      <div>
+        <span>Reasoning</span>
+        <button class="${state.assistantReasoning === "Auto" ? "selected" : ""}" type="button" data-routing-reasoning="Auto">Auto</button>
+        <button class="${state.assistantReasoning === "Critic" ? "selected" : ""}" type="button" data-routing-reasoning="Critic">Critic</button>
+        <button class="${state.assistantReasoning === "Waterfall" ? "selected" : ""}" type="button" data-routing-reasoning="Waterfall">Waterfall</button>
+      </div>
+    </div>
+    <div class="routing-run-actions">
+      <button class="secondary-button" type="button" data-routing-action="dismiss">Run with defaults</button>
+      <button class="primary-button" type="button" data-routing-action="run"><i data-lucide="play"></i> Run Tegy</button>
+    </div>
+  `;
+}
+
+function updateRoutingPrelude(card) {
+  const { prompt, laneChoice } = getRoutingPreludeState(card);
+  const route = routePrompt(prompt, laneChoice);
+  const status = card.querySelector("[data-routing-status]");
+  const brief = card.querySelector("[data-routing-brief]");
+  const summary = card.querySelector(".routing-run-summary");
+  const outputText = state.assistantOutput || route.output;
+  if (status) status.textContent = `Best match: ${route.lane}`;
+  if (brief) brief.textContent = buildRoutingBrief(prompt, laneChoice);
+  if (summary) {
+    summary.innerHTML = `
+      <span><i data-lucide="folder-check"></i>${escapeHtml(state.assistantProject || "No project selected")}</span>
+      <span><i data-lucide="file-output"></i>${escapeHtml(outputText)}</span>
+      <span><i data-lucide="database"></i>${escapeHtml(getContextCountLabel())}</span>
+    `;
+  }
+
+  card.querySelectorAll("[data-routing-choice]").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.routingChoice === laneChoice);
+  });
+  card.querySelectorAll("[data-routing-depth]").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.routingDepth === card.dataset.depth);
+  });
+  card.querySelectorAll("[data-routing-reasoning]").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.routingReasoning === card.dataset.reasoning);
+  });
+  syncIcons();
+}
+
+function createRoutingPreludeCard(prompt) {
+  const card = document.createElement("article");
+  card.className = "response-card routing-run-card";
+  card.dataset.prompt = prompt;
+  card.dataset.laneChoice = state.assistantLaneChoice;
+  card.dataset.depth = state.assistantDepth;
+  card.dataset.reasoning = state.assistantReasoning;
+  card.innerHTML = renderRoutingPrelude(prompt);
+  updateRoutingPrelude(card);
+  return card;
+}
+
+function setRoutingPreludeChoice(button) {
+  const card = button.closest(".routing-run-card");
+  if (!card || card.classList.contains("locked")) return;
+  if (button.dataset.routingChoice) card.dataset.laneChoice = button.dataset.routingChoice;
+  if (button.dataset.routingDepth) card.dataset.depth = button.dataset.routingDepth;
+  if (button.dataset.routingReasoning) card.dataset.reasoning = button.dataset.routingReasoning;
+  updateRoutingPrelude(card);
+}
+
+function completeRoutingPrelude(card, shouldRun = true) {
+  if (card.classList.contains("locked")) return;
+  const { prompt, laneChoice, depth, reasoning } = getRoutingPreludeState(card);
+  state.assistantLaneChoice = laneChoice;
+  state.assistantDepth = depth;
+  state.assistantReasoning = reasoning;
+  state.assistantChoicesLocked = true;
+  renderAssistantSettings();
+  card.classList.add("locked");
+  card.querySelectorAll("button").forEach((button) => {
+    if (!button.dataset.routingAction) button.disabled = true;
+  });
+  const actions = card.querySelector(".routing-run-actions");
+  if (actions) actions.innerHTML = `<span class="routing-run-locked"><i data-lucide="lock-keyhole"></i> Routing locked</span>`;
+  const status = card.querySelector("[data-routing-status]");
+  if (status) status.textContent = `Locked: ${routePrompt(prompt, laneChoice).lane}`;
+  syncIcons();
+  if (shouldRun) appendAgentResponse(prompt, { laneChoice, depth, reasoning }, card);
 }
 
 function getDecisionCheckpoint(route) {
@@ -2567,16 +2681,33 @@ function addResponse(prompt) {
   if (!stack) return;
 
   setChatMode(true);
-  const contexts = getActiveContexts();
-  const contextText = contexts.length ? contexts.join(", ") : "no selected context";
-  const route = routePrompt(prompt);
-  const run = getLaneRun(route);
-  const projectText = state.assistantProject ? state.assistantProject : "No project selected";
-  const draftTitle = run.title.replace(/\sdraft$/i, "");
+  state.assistantChoicesLocked = false;
 
   const userCard = document.createElement("article");
   userCard.className = "message-card user-message";
   userCard.innerHTML = `<p>${escapeHtml(prompt)}</p>`;
+
+  const routingCard = createRoutingPreludeCard(prompt);
+  stack.append(userCard, routingCard);
+  syncIcons();
+  window.requestAnimationFrame(() => {
+    routingCard.scrollIntoView({ behavior: "smooth", block: "end" });
+  });
+}
+
+function appendAgentResponse(prompt, routing, afterElement = null) {
+  const stack = document.querySelector("#conversationStack");
+  if (!stack) return;
+
+  const contexts = getActiveContexts();
+  const contextText = contexts.length ? contexts.join(", ") : "no selected context";
+  const laneChoice = routing?.laneChoice || state.assistantLaneChoice;
+  const depth = routing?.depth || state.assistantDepth;
+  const reasoning = routing?.reasoning || state.assistantReasoning;
+  const route = routePrompt(prompt, laneChoice);
+  const run = getLaneRun(route);
+  const projectText = state.assistantProject ? state.assistantProject : "No project selected";
+  const draftTitle = run.title.replace(/\sdraft$/i, "");
 
   const card = document.createElement("article");
   card.className = "response-card assistant-message";
@@ -2596,15 +2727,19 @@ function addResponse(prompt) {
       <span><i data-lucide="route"></i>${escapeHtml(route.logic)}</span>
       <span><i data-lucide="file-output"></i>${escapeHtml(route.output)}</span>
       <span><i data-lucide="database"></i>${contexts.length ? `${contexts.length} selected` : "No sources selected"}</span>
-      <span><i data-lucide="lock-keyhole"></i>${escapeHtml(getRoutingChoiceLabel())}</span>
-      <span><i data-lucide="gauge"></i>${escapeHtml(state.assistantDepth)}</span>
-      <span><i data-lucide="brain-circuit"></i>${escapeHtml(state.assistantReasoning)}</span>
+      <span><i data-lucide="lock-keyhole"></i>${escapeHtml(getRoutingChoiceLabel(laneChoice))}</span>
+      <span><i data-lucide="gauge"></i>${escapeHtml(depth)}</span>
+      <span><i data-lucide="brain-circuit"></i>${escapeHtml(reasoning)}</span>
     </div>
     <p><b>Request:</b> ${escapeHtml(prompt)}</p>
-    <p>${contexts.length ? `Using ${escapeHtml(contextText)}, Tegy is running the lane logic` : "With no context selected, Tegy is running the lane logic"} with ${escapeHtml(state.assistantDepth.toLowerCase())} depth and ${escapeHtml(state.assistantReasoning.toLowerCase())} reasoning, then building a decision-ready ${escapeHtml(route.output.toLowerCase())}. Routing choice: ${escapeHtml(getRoutingChoiceLabel())}.</p>
+    <p>${contexts.length ? `Using ${escapeHtml(contextText)}, Tegy is running the lane logic` : "With no context selected, Tegy is running the lane logic"} with ${escapeHtml(depth.toLowerCase())} depth and ${escapeHtml(reasoning.toLowerCase())} reasoning, then building a decision-ready ${escapeHtml(route.output.toLowerCase())}. Routing choice: ${escapeHtml(getRoutingChoiceLabel(laneChoice))}.</p>
     ${renderAgentRun(run, route)}
   `;
-  stack.append(userCard, card);
+  if (afterElement?.parentElement === stack) {
+    afterElement.insertAdjacentElement("afterend", card);
+  } else {
+    stack.append(card);
+  }
   syncIcons();
   animateAgentRun(card);
   window.requestAnimationFrame(() => {
@@ -3173,7 +3308,6 @@ function init() {
       state.assistantDepth = button.dataset.depth;
       state.assistantChoicesLocked = false;
       renderAssistantSettings();
-      renderRoutingLock();
       setSettingPicker("depth", false);
     });
   });
@@ -3183,47 +3317,13 @@ function init() {
       state.assistantReasoning = button.dataset.reasoning;
       state.assistantChoicesLocked = false;
       renderAssistantSettings();
-      renderRoutingLock();
       setSettingPicker("reasoning", false);
     });
-  });
-
-  document.querySelectorAll("[data-lane-choice]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.assistantLaneChoice = button.dataset.laneChoice;
-      state.assistantChoicesLocked = false;
-      renderRoutingLock();
-    });
-  });
-
-  document.querySelectorAll("[data-preflight-depth]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.assistantDepth = button.dataset.preflightDepth;
-      state.assistantChoicesLocked = false;
-      renderAssistantSettings();
-      renderRoutingLock();
-    });
-  });
-
-  document.querySelectorAll("[data-preflight-reasoning]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.assistantReasoning = button.dataset.preflightReasoning;
-      state.assistantChoicesLocked = false;
-      renderAssistantSettings();
-      renderRoutingLock();
-    });
-  });
-
-  document.querySelector("#lockRoutingChoices").addEventListener("click", lockRoutingChoices);
-  document.querySelector("#hideRoutingLock").addEventListener("click", () => {
-    const card = document.querySelector("#routingLockCard");
-    if (card) card.hidden = true;
   });
 
   document.querySelector("#promptInput").addEventListener("input", () => {
     resizePromptInput();
     state.assistantChoicesLocked = false;
-    renderRoutingLock();
   });
 
   document.querySelector("#promptInput").addEventListener("keydown", (event) => {
@@ -3237,16 +3337,32 @@ function init() {
     const input = document.querySelector("#promptInput");
     const prompt = input.value.trim();
     if (!prompt) return;
-    if (!state.assistantChoicesLocked) {
-      lockRoutingChoices();
-    }
     addResponse(prompt);
     input.value = "";
     resizePromptInput();
-    renderRoutingLock();
   });
 
   document.querySelector("#conversationStack").addEventListener("click", (event) => {
+    const routingChoice = event.target.closest("[data-routing-choice], [data-routing-depth], [data-routing-reasoning]");
+    if (routingChoice) {
+      setRoutingPreludeChoice(routingChoice);
+      return;
+    }
+
+    const routingAction = event.target.closest("[data-routing-action]");
+    if (routingAction) {
+      const card = routingAction.closest(".routing-run-card");
+      if (!card) return;
+      if (routingAction.dataset.routingAction === "dismiss") {
+        completeRoutingPrelude(card, true);
+        return;
+      }
+      if (routingAction.dataset.routingAction === "run") {
+        completeRoutingPrelude(card, true);
+      }
+      return;
+    }
+
     const dpOption = event.target.closest("[data-dp-option]");
     if (dpOption) {
       selectDecisionCheckpointOption(dpOption);
