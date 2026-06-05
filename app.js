@@ -8,6 +8,8 @@ const state = {
   artifactPage: 1,
   selectedArtifactTitle: "Segment decision memo",
   selectedArtifactProject: "Tegy Launch",
+  assistantDepth: "Heavy",
+  assistantReasoning: "Auto",
   chatStarted: false,
 };
 
@@ -1436,6 +1438,40 @@ function setLanePicker(open) {
   picker.hidden = !open;
 }
 
+function setSettingPicker(kind, open) {
+  const depthPicker = document.querySelector("#depthPicker");
+  const reasoningPicker = document.querySelector("#reasoningPicker");
+  const depthToggle = document.querySelector("#depthToggle");
+  const reasoningToggle = document.querySelector("#reasoningToggle");
+  const activePicker = kind === "reasoning" ? reasoningPicker : depthPicker;
+  const activeToggle = kind === "reasoning" ? reasoningToggle : depthToggle;
+
+  if (depthPicker && activePicker !== depthPicker) depthPicker.hidden = true;
+  if (reasoningPicker && activePicker !== reasoningPicker) reasoningPicker.hidden = true;
+  if (depthToggle && activeToggle !== depthToggle) depthToggle.setAttribute("aria-expanded", "false");
+  if (reasoningToggle && activeToggle !== reasoningToggle) reasoningToggle.setAttribute("aria-expanded", "false");
+  if (!activePicker || !activeToggle) return;
+
+  if (open) setLanePicker(false);
+  activePicker.hidden = !open;
+  activeToggle.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function renderAssistantSettings() {
+  const depthLabel = document.querySelector("#depthButtonLabel");
+  const reasoningLabel = document.querySelector("#reasoningButtonLabel");
+  if (depthLabel) depthLabel.textContent = `Depth: ${state.assistantDepth}`;
+  if (reasoningLabel) reasoningLabel.textContent = `Reasoning: ${state.assistantReasoning}`;
+
+  document.querySelectorAll("[data-depth]").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.depth === state.assistantDepth);
+  });
+
+  document.querySelectorAll("[data-reasoning]").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.reasoning === state.assistantReasoning);
+  });
+}
+
 function selectOutput(output) {
   state.assistantOutput = output;
   document.querySelectorAll("#lanePicker [data-output]").forEach((button) => {
@@ -1588,9 +1624,11 @@ function addResponse(prompt) {
       <span><i data-lucide="route"></i>${escapeHtml(route.logic)}</span>
       <span><i data-lucide="file-output"></i>${escapeHtml(route.output)}</span>
       <span><i data-lucide="database"></i>${contexts.length ? `${contexts.length} selected` : "No sources selected"}</span>
+      <span><i data-lucide="gauge"></i>${escapeHtml(state.assistantDepth)}</span>
+      <span><i data-lucide="brain-circuit"></i>${escapeHtml(state.assistantReasoning)}</span>
     </div>
     <p><b>Request:</b> ${escapeHtml(prompt)}</p>
-    <p>${contexts.length ? `Using ${escapeHtml(contextText)}, Tegy is running the lane logic` : "With no context selected, Tegy is running the lane logic"} and building a decision-ready ${escapeHtml(route.output.toLowerCase())}.</p>
+    <p>${contexts.length ? `Using ${escapeHtml(contextText)}, Tegy is running the lane logic` : "With no context selected, Tegy is running the lane logic"} with ${escapeHtml(state.assistantDepth.toLowerCase())} depth and ${escapeHtml(state.assistantReasoning.toLowerCase())} reasoning, then building a decision-ready ${escapeHtml(route.output.toLowerCase())}.</p>
     ${renderAgentRun(run)}
   `;
   stack.append(userCard, card);
@@ -1888,15 +1926,18 @@ function init() {
   });
 
   document.addEventListener("click", (event) => {
+    if (event.target.closest(".assistant-setting-control") || event.target.closest(".setting-picker")) return;
     if (event.target.closest(".project-picker")) return;
     setProjectTabMenu("#vaultProjectMenu", "#vaultProjectTab", false);
     setProjectTabMenu("#artifactProjectMenu", "#artifactProjectTab", false);
+    setSettingPicker("depth", false);
   });
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
     setProjectTabMenu("#vaultProjectMenu", "#vaultProjectTab", false);
     setProjectTabMenu("#artifactProjectMenu", "#artifactProjectTab", false);
+    setSettingPicker("depth", false);
   });
 
   document.querySelector("#vaultProjectTab").addEventListener("click", () => {
@@ -1991,6 +2032,32 @@ function init() {
   document.querySelector("#setMatterButton").addEventListener("click", () => {
     const picker = document.querySelector("#lanePicker");
     setLanePicker(picker.hidden);
+  });
+
+  document.querySelector("#depthToggle").addEventListener("click", () => {
+    const picker = document.querySelector("#depthPicker");
+    setSettingPicker("depth", picker.hidden);
+  });
+
+  document.querySelector("#reasoningToggle").addEventListener("click", () => {
+    const picker = document.querySelector("#reasoningPicker");
+    setSettingPicker("reasoning", picker.hidden);
+  });
+
+  document.querySelectorAll("[data-depth]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.assistantDepth = button.dataset.depth;
+      renderAssistantSettings();
+      setSettingPicker("depth", false);
+    });
+  });
+
+  document.querySelectorAll("[data-reasoning]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.assistantReasoning = button.dataset.reasoning;
+      renderAssistantSettings();
+      setSettingPicker("reasoning", false);
+    });
   });
 
   document.querySelector("#promptInput").addEventListener("input", resizePromptInput);
@@ -2093,6 +2160,7 @@ function init() {
   setAgent("claude");
   selectProject(state.activeProject, { scopeAssistant: false });
   renderAssistantScope();
+  renderAssistantSettings();
   renderVaultRows();
   syncIcons();
 }

@@ -828,6 +828,51 @@ svg {
   font-size: 11px;
 }
 
+.setting-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  width: min(720px, 100%);
+  margin: 8px auto 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.setting-picker[hidden] {
+  display: none;
+}
+
+.setting-picker button {
+  display: grid;
+  gap: 3px;
+  min-height: 58px;
+  padding: 10px;
+  border: 1px solid #eee9e3;
+  border-radius: 4px;
+  background: #fbfbfa;
+  color: var(--ink);
+  text-align: left;
+}
+
+.setting-picker button:hover,
+.setting-picker button.selected {
+  border-color: #d8d0c6;
+  background: #ffffff;
+}
+
+.setting-picker strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.setting-picker span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
 .composer {
   overflow: hidden;
   border: 1px solid #eeeae5;
@@ -902,7 +947,8 @@ svg {
   font-size: 12px;
 }
 
-.tool-buttons button:hover {
+.tool-buttons button:hover,
+.tool-buttons button[aria-expanded="true"] {
   background: #eceae6;
 }
 
@@ -2516,6 +2562,7 @@ h2 {
 
 :root[data-theme="dark"] .composer,
 :root[data-theme="dark"] .lane-picker,
+:root[data-theme="dark"] .setting-picker,
 :root[data-theme="dark"] .panel,
 :root[data-theme="dark"] .project-card,
 :root[data-theme="dark"] .artifact-card,
@@ -2544,6 +2591,7 @@ h2 {
 }
 
 :root[data-theme="dark"] .lane-picker button,
+:root[data-theme="dark"] .setting-picker button,
 :root[data-theme="dark"] .workflow-card,
 :root[data-theme="dark"] .source-chip:not(.active),
 :root[data-theme="dark"] .vault-scope,
@@ -2569,6 +2617,8 @@ h2 {
 :root[data-theme="dark"] .vault-scope-button:hover,
 :root[data-theme="dark"] .lane-picker button.selected,
 :root[data-theme="dark"] .lane-picker button:hover,
+:root[data-theme="dark"] .setting-picker button.selected,
+:root[data-theme="dark"] .setting-picker button:hover,
 :root[data-theme="dark"] .filter-chip.active,
 :root[data-theme="dark"] .filter-chip:hover,
 :root[data-theme="dark"] .source-table button.selected,

@@ -7,9 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=aligned-page-headers" />
+    <link rel="stylesheet" href="./styles.css?v=depth-reasoning-controls" />
     <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script defer src="./app.js?v=aligned-page-headers"></script>
+    <script defer src="./app.js?v=depth-reasoning-controls"></script>
   </head>
   <body>
     <section class="desktop-only-gate" aria-label="Desktop required">
@@ -285,12 +285,40 @@
               <div class="composer-toolbar">
                 <div class="tool-buttons">
                   <button type="button"><i data-lucide="plus"></i> Sources</button>
-                  <button type="button"><i data-lucide="list-plus"></i> Prompts</button>
-                  <button type="button"><i data-lucide="sliders-horizontal"></i> Customize</button>
+                  <button class="assistant-setting-control" id="depthToggle" type="button" aria-expanded="false" aria-controls="depthPicker"><i data-lucide="gauge"></i> <span id="depthButtonLabel">Depth: Heavy</span></button>
+                  <button class="assistant-setting-control" id="reasoningToggle" type="button" aria-expanded="false" aria-controls="reasoningPicker"><i data-lucide="brain-circuit"></i> <span id="reasoningButtonLabel">Reasoning: Auto</span></button>
                 </div>
                 <button class="send-button" type="submit" aria-label="Submit prompt"><i data-lucide="arrow-up"></i></button>
               </div>
             </form>
+            <div class="setting-picker" id="depthPicker" hidden>
+              <button type="button" data-depth="Heavy">
+                <strong>Heavy</strong>
+                <span>End-to-end waterfall, critic pass, full artifact set.</span>
+              </button>
+              <button type="button" data-depth="Med">
+                <strong>Med</strong>
+                <span>Targeted workstream with focused checkpoints.</span>
+              </button>
+              <button type="button" data-depth="Lite">
+                <strong>Lite</strong>
+                <span>Quick take for a fast read.</span>
+              </button>
+            </div>
+            <div class="setting-picker" id="reasoningPicker" hidden>
+              <button type="button" data-reasoning="Auto">
+                <strong>Auto</strong>
+                <span>Tegy chooses the right StrategyOS lane logic.</span>
+              </button>
+              <button type="button" data-reasoning="Critic">
+                <strong>Critic</strong>
+                <span>Pressure-test assumptions before drafting.</span>
+              </button>
+              <button type="button" data-reasoning="Waterfall">
+                <strong>Waterfall</strong>
+                <span>Run the full lane sequence before output.</span>
+              </button>
+            </div>
 
             <div class="context-source-panel" aria-label="Copilot context sources">
               <div class="context-source-header">
