@@ -130,49 +130,63 @@ const artifactMeta = {
     lane: "Business Strategy",
     status: "Ready",
     sources: "Project Sources, Decision Log",
-    decisions: "DP-3, DP-7",
+    decisions: "DP-3, DP-7, DP-9",
     version: "v1",
+  },
+  "Roadmap rationale": {
+    lane: "Product Management",
+    status: "Draft",
+    sources: "Product roadmap synthesis, User pain notes",
+    decisions: "DP-3, DP-7, DP-11",
+    version: "v0.2",
   },
   "GTM launch checklist": {
     lane: "GTM Strategy",
     status: "Draft",
     sources: "Product roadmap synthesis, Channel economics draft",
-    decisions: "DP-2, DP-9",
+    decisions: "DP-2, DP-9, DP-12",
     version: "v0.3",
   },
   "Pricing and packaging memo": {
     lane: "Product Management",
     status: "Draft",
     sources: "Pricing assumptions, Global Context",
-    decisions: "DP-11",
+    decisions: "DP-11, DP-14",
     version: "v0.2",
   },
   "Board memo": {
     lane: "Business Strategy",
     status: "Ready",
     sources: "Investor narrative draft, ARR bridge model",
-    decisions: "DP-1, DP-4",
+    decisions: "DP-1, DP-4, DP-7",
     version: "v1",
   },
   "Investment thesis memo": {
     lane: "M&A Strategy",
     status: "Draft",
     sources: "Market timing notes, Target universe map",
-    decisions: "DP-5",
+    decisions: "DP-5, DP-13",
     version: "v0.4",
   },
   "Investor FAQ": {
     lane: "Business Strategy",
     status: "Draft",
     sources: "Board Q&A backlog, Global Context",
-    decisions: "DP-6",
+    decisions: "DP-6, DP-15",
+    version: "v0.2",
+  },
+  "Investor memo": {
+    lane: "Business Strategy",
+    status: "Draft",
+    sources: "Board Q&A backlog, Investor narrative draft",
+    decisions: "DP-6, DP-15",
     version: "v0.2",
   },
   "Target-fit memo": {
     lane: "M&A Target Fit",
     status: "Ready",
     sources: "Capability gap thesis, Screening scorecard",
-    decisions: "DP-8, DP-10",
+    decisions: "DP-8, DP-10, DP-12",
     version: "v1",
   },
   "Screening scorecard": {
@@ -181,6 +195,142 @@ const artifactMeta = {
     sources: "Target universe map",
     decisions: "DP-8",
     version: "v1",
+  },
+};
+
+const artifactGenerationMeta = {
+  "Segment decision memo": {
+    artifact: "business-strategy-memo",
+    round: "1",
+    agent: "01-biz-01-strategist",
+    skills: [
+      "biz-mece-structure",
+      "biz-hypothesis-driven-analysis",
+      "biz-north-star-alignment",
+      "biz-executive-comms",
+    ],
+    dpLocks: ["DP-3", "DP-7", "DP-9"],
+    status: "draft - pending critic pass",
+  },
+  "Roadmap rationale": {
+    artifact: "product-strategy-memo",
+    round: "2",
+    agent: "02-prod-01-product-strategist",
+    skills: [
+      "prod-market-definition",
+      "prod-pain-solution-matrix",
+      "prod-roadmap-sequencing",
+      "prod-prd-writer",
+      "biz-north-star-alignment",
+    ],
+    dpLocks: ["DP-3", "DP-7", "DP-11"],
+    status: "draft - pending product critic pass",
+  },
+  "GTM launch checklist": {
+    artifact: "gtm-launch-checklist",
+    round: "3",
+    agent: "03-gtm-01-gtm-strategist",
+    skills: [
+      "gtm-market-motion",
+      "gtm-channel-economics",
+      "gtm-demand-plan",
+      "gtm-rigor-review",
+      "biz-executive-comms",
+    ],
+    dpLocks: ["DP-2", "DP-9", "DP-12"],
+    status: "draft - revise before ship",
+  },
+  "Pricing and packaging memo": {
+    artifact: "pricing-packaging-memo",
+    round: "2",
+    agent: "02-prod-01-product-strategist",
+    skills: [
+      "prod-pricing-packaging",
+      "prod-segmentation-mece",
+      "prod-pain-solution-matrix",
+      "biz-hypothesis-driven-analysis",
+    ],
+    dpLocks: ["DP-11", "DP-14"],
+    status: "draft - pricing lock pending",
+  },
+  "Board memo": {
+    artifact: "board-decision-memo",
+    round: "4",
+    agent: "01-biz-02-operator",
+    skills: [
+      "biz-executive-comms",
+      "biz-storyline",
+      "biz-mece-structure",
+      "biz-north-star-alignment",
+    ],
+    dpLocks: ["DP-1", "DP-4", "DP-7"],
+    status: "ready - board review",
+  },
+  "Investment thesis memo": {
+    artifact: "ma-strategy-memo",
+    round: "1",
+    agent: "04-ma-01-ma-strategist",
+    skills: [
+      "ma-thesis-and-portfolio",
+      "ma-deal-types",
+      "ma-frameworks",
+      "biz-mece-structure",
+      "biz-executive-comms",
+    ],
+    dpLocks: ["DP-5", "DP-13"],
+    status: "draft - diligence gaps open",
+  },
+  "Investor FAQ": {
+    artifact: "investor-faq",
+    round: "4",
+    agent: "01-biz-02-operator",
+    skills: [
+      "biz-executive-comms",
+      "biz-storyline",
+      "biz-checkpoint-discipline",
+      "biz-rigor-review",
+    ],
+    dpLocks: ["DP-6", "DP-15"],
+    status: "draft - evidence labels pending",
+  },
+  "Investor memo": {
+    artifact: "investor-narrative-memo",
+    round: "4",
+    agent: "01-biz-02-operator",
+    skills: [
+      "biz-executive-comms",
+      "biz-storyline",
+      "biz-rigor-review",
+      "biz-north-star-alignment",
+    ],
+    dpLocks: ["DP-6", "DP-15"],
+    status: "draft - investor packaging pass pending",
+  },
+  "Target-fit memo": {
+    artifact: "target-fit-memo",
+    round: "2",
+    agent: "04-ma-01-ma-strategist",
+    skills: [
+      "ma-target-fit",
+      "ma-rigor-review",
+      "ma-thesis-and-portfolio",
+      "biz-mece-structure",
+    ],
+    dpLocks: ["DP-8", "DP-10", "DP-12"],
+    status: "ready - pursue/pass threshold locked",
+  },
+  "Screening scorecard": {
+    artifact: "screening-scorecard",
+    round: "2",
+    agent: "04-ma-01-ma-strategist",
+    skills: [
+      "ma-target-fit",
+      "ma-rigor-review",
+      "biz-hypothesis-driven-analysis",
+      "biz-executive-comms",
+    ],
+    dpLocks: ["DP-8", "DP-10"],
+    status: "ready - evidence quality tagged",
   },
 };
 
@@ -491,6 +641,467 @@ const artifactSections = {
   ],
 };
 
+const generatedOutputSections = {
+  "Segment decision memo": [
+    {
+      eyebrow: "TL;DR",
+      title: "Tegy Launch has a real wedge, but the launch scope is still wider than the evidence.",
+      body:
+        "Tegy should ship a PLG-primary strategy-workbench motion for founder-led operators, not a broad AI-consulting platform narrative. The current proof is strongest where users bring messy project context and need a decision-ready output, not where they want generic strategy chat.",
+      paragraphs: [
+        "The load-bearing question is not whether the product can generate useful strategy work. It can. The question is whether the team can make repeated source-grounded outputs fast enough that the user saves, reopens, and acts on them before the novelty of the chat surface fades.",
+        "Recommendation: lock one beachhead, one activation definition, and one launch output sequence before scaling channel or template breadth.",
+      ],
+      callout: "Status: draft - pending critic pass. Do not treat as locked until DP-7 activation is accepted.",
+    },
+    {
+      eyebrow: "1. Market definition",
+      title: "The empty middle is consultant-grade rigor without consultant overhead.",
+      body:
+        "Hypothesis H1: founders and strategy operators have a persistent gap between generic AI answers and expensive expert work. The gap is real, but Tegy only wins if it operationalizes rigor as a workflow, not as another prompt library.",
+      table: [
+        ["Option", "Cost", "Rigor", "User effort", "Where Tegy differs"],
+        ["Generic AI chat", "$20-200/mo", "Low without strong prompting", "High", "Adds lane routing, source context, and DP memory"],
+        ["Consultant/advisor", "$5k-300k+", "High", "Medium", "Compresses first-pass analysis and keeps provenance visible"],
+        ["Templates/playbooks", "$0-500", "Medium", "High", "Turns frameworks into generated outputs"],
+        ["Tegy target", "$20-200+/mo", "High enough for first decisions", "Medium-low", "Routes project context through StrategyOS lanes"],
+      ],
+      callout:
+        "Verdict on H1: confirmed structurally, but willingness to pay for repeated governed outputs remains unproven.",
+    },
+    {
+      eyebrow: "2. Validation target critique",
+      title: "The launch needs an activation metric before it needs more output types.",
+      body:
+        "The current prototype makes the right objects visible: projects, vault context, outputs, decisions, and API access. The risk is interpreting page visits or chat submissions as validation. For Tegy, activation should require evidence that the output became part of the user's working system.",
+      table: [
+        ["Metric", "Bad definition", "Better definition", "Reason"],
+        ["Activation", "Generated one answer", "Saved or reopened an output", "Separates novelty from value"],
+        ["Context quality", "Uploaded a file", "Used source in a generated output", "Measures source-grounded work"],
+        ["Decision memory", "Viewed Decision Log", "Locked or reused a DP", "Shows workflow governance"],
+        ["Repeat use", "Returned to app", "Opened same project and continued work", "Confirms matter-style persistence"],
+      ],
+      callout: "DP-7 pending: activation equals saved or reused output, not chat volume.",
+    },
+    {
+      eyebrow: "3. Strategic options",
+      title: "Choose a PLG-primary wedge and hold sales-assisted work behind a gate.",
+      body:
+        "The option set is mutually exclusive at the motion level. Tegy can borrow tactics from sales-assisted work, but it should not split the operating model before the first activation cohort is real.",
+      table: [
+        ["Option", "Why it could work", "What breaks", "Call"],
+        ["PLG primary", "Fastest path to usage proof and self-serve distribution", "Requires crisp first-run value and source-gated examples", "Ship"],
+        ["Sales-assisted", "Useful for named strategic accounts", "Pulls founders into custom service too early", "Hold"],
+        ["Agency-led outbound", "Can create volume", "Creates false signal before ICP and message lock", "Gate"],
+        ["Template marketplace", "Easy to package", "Turns product into static content", "Defer"],
+      ],
+    },
+    {
+      eyebrow: "4. Decision Points Index",
+      title: "Six locks determine whether downstream work is safe to generate.",
+      body:
+        "This memo should create explicit decision work, not hide assumptions inside prose.",
+      table: [
+        ["DP", "Question", "Status", "Owner"],
+        ["DP-1", "Which user segment is the first beachhead?", "Default-OK: founder-led operator", "Founder"],
+        ["DP-3", "Does ICP stay founder-led until first activation data?", "Locked for Round 1", "Founder"],
+        ["DP-7", "What counts as activation?", "Pending lock", "Product"],
+        ["DP-9", "Can named-list collateral be generated before founder validation?", "Pending lock", "Founder"],
+        ["DP-11", "What upgrade trigger proves willingness to pay?", "Pending lock", "Product"],
+        ["DP-12", "Which evidence threshold unlocks broader GTM?", "Pending lock", "Founder"],
+      ],
+    },
+    {
+      eyebrow: "5. Bottom line",
+      title: "Proceed, but make the launch a learning system rather than a content factory.",
+      body:
+        "What Tegy has right: project-scoped work, source grounding, generated outputs, and decision memory. What remains fragile: activation definition, pricing proof, and the risk that output breadth substitutes for a sharp workflow.",
+      bullets: [
+        "Before Round 2: lock activation and project-scope defaults.",
+        "Before Round 3: validate the first GTM named list and channel sequence.",
+        "Before scaling: prove at least one cohort saves, reopens, and acts on generated outputs.",
+      ],
+      callout: "Checkpoint required before GTM execution: DP-7 and DP-9.",
+    },
+  ],
+  "Roadmap rationale": [
+    {
+      eyebrow: "TL;DR",
+      title: "The product problem is time-to-decision, not number of features.",
+      body:
+        "Tegy should prioritize the loop that turns a selected project plus selected sources into a decision-ready output, then preserves that output and its locks. The current roadmap should de-emphasize more templates until activation behavior is observable.",
+      paragraphs: [
+        "The strongest product thesis is not that users need an AI chat. They need a workbench that remembers the matter, applies the right StrategyOS lane, and leaves behind governed work product.",
+      ],
+    },
+    {
+      eyebrow: "1. Product hypothesis",
+      title: "The first value moment is a useful output with provenance.",
+      body:
+        "Hypothesis H1: users will trust Tegy when the answer is not just fluent, but visibly routed, sourced, and ready to become a memo, checklist, scorecard, or decision lock.",
+      table: [
+        ["Product bet", "User pain solved", "Signal to watch", "Current priority"],
+        ["Project-scoped Copilot", "Work resumes inside a matter", "Continued thread in same project", "P0"],
+        ["Vault context selection", "Sources travel into output", "Source chip used in run", "P0"],
+        ["Generated outputs", "Work product survives chat", "Output opened or exported", "P0"],
+        ["Decision Log", "Assumptions do not disappear", "DP locked or reused", "P1"],
+        ["More template types", "Broader use cases", "Output volume", "Defer"],
+      ],
+    },
+    {
+      eyebrow: "2. Roadmap sequence",
+      title: "Build the activation spine before expanding the surface area.",
+      body:
+        "The next product cycle should be sequenced around one repeatable loop: choose project, choose output, select sources, pick depth, run lane, inspect output, lock decisions.",
+      table: [
+        ["Sequence", "Capability", "Acceptance test"],
+        ["Step 1", "Project and output defaults", "Existing projects auto-select first project; output remains explicit"],
+        ["Step 2", "Source selection", "No source is assumed until user selects it"],
+        ["Step 3", "Depth and reasoning controls", "User can choose lite, medium, heavy and routing mode"],
+        ["Step 4", "Live lane run", "Agent steps stream before final output"],
+        ["Step 5", "Output governance", "Open output shows metadata, trace, DP locks, and status"],
+      ],
+    },
+    {
+      eyebrow: "3. PRD-ready requirements",
+      title: "The product requirements should name the behavioral signal, not the implementation object.",
+      body:
+        "Do not make backend storage choices inside the UI PRD. A decision could be a tagged message, a derived record, frontmatter, or an output annotation. The product requirement is that the user can see, lock, and reuse it.",
+      bullets: [
+        "Requirement: every generated output carries project, lane, agent, skills applied, source context, DP locks consumed, and draft/ready status.",
+        "Requirement: Copilot defaults to one project when projects exist, but sources remain unselected until the user chooses them.",
+        "Requirement: project-scoped Vault and Outputs views preserve the same tab grammar as global views.",
+      ],
+    },
+    {
+      eyebrow: "4. Bottom line",
+      title: "Ship the loop, then widen the library.",
+      body:
+        "The roadmap should not chase page count. It should make the core Tegy loop feel reliable enough that the user trusts generated work as a reusable artifact.",
+      callout: "Next lock: define the saved-output activation threshold and the first cohort review date.",
+    },
+  ],
+  "GTM launch checklist": [
+    {
+      eyebrow: "TL;DR",
+      title: "Do not launch demand generation until four GTM gates are resolved.",
+      body:
+        "The GTM lane can run only after product strategy, ICP, context sources, and launch motion are coherent. Current recommendation: ship a controlled founder-led PLG launch, but block scaled outbound until activation, founder-time, interviews, and named-list quality are locked.",
+      callout: "Status: draft - revise before ship.",
+    },
+    {
+      eyebrow: "1. GTM spine",
+      title: "Wedge -> motion -> channel -> operating rhythm.",
+      body:
+        "The wedge is founder-led operators with a real decision or work product to create. The motion is PLG primary with founder proof. The first channel is founder network; LinkedIn and communities follow after messaging proof.",
+      table: [
+        ["Layer", "Current call", "Risk", "Gate"],
+        ["Wedge", "Founder-led operators", "Too broad if called all strategy teams", "ICP lock"],
+        ["Motion", "PLG primary", "Could become services-led under pressure", "Founder time cap"],
+        ["Channel", "Founder network first", "Warm bias can inflate signal", "Cold channel follow-up"],
+        ["Message", "Source-grounded strategy outputs", "Sounds like generic AI if not proven", "Output examples"],
+        ["Rhythm", "30/60/90 reviews", "Default-continue drift", "Kill criteria"],
+      ],
+    },
+    {
+      eyebrow: "2. Launch fixes",
+      title: "Four fixes reduce the pre-mortem risk before execution.",
+      body:
+        "These are not cosmetic. Each fix prevents a common false-positive launch signal.",
+      table: [
+        ["Fix", "Owner", "When", "Ship impact"],
+        ["Activation metric: saved or reopened output", "Product", "Week 0", "Prevents vanity usage"],
+        ["Founder time cap: 12-15 hrs/week", "Founder", "Week 0", "Keeps channel plan realistic"],
+        ["5-10 ICP interviews", "Founder", "Weeks 1-2", "Validates segment language"],
+        ["ABM list gate", "Founder", "Week 0", "Blocks premature per-target assets"],
+      ],
+    },
+    {
+      eyebrow: "3. First 30 days",
+      title: "The launch should test conversion-rate viability, not revenue scale.",
+      body:
+        "The first 30 days measure whether the target user can reach a source-grounded output and find it useful enough to save or continue. Revenue is a later signal because the project loop must work before packaging can be trusted.",
+      bullets: [
+        "Day 0: publish real output examples and route every prompt through a visible lane.",
+        "Day 7: review source selection and first output completion.",
+        "Day 14: inspect saved-output and reopened-output behavior.",
+        "Day 30: decide whether to keep, narrow, or re-cut the wedge.",
+      ],
+    },
+    {
+      eyebrow: "4. DP index",
+      title: "Open decisions that block scaled GTM.",
+      table: [
+        ["DP", "Question", "Status", "Default"],
+        ["DP-2", "Which output proves activation first?", "Pending", "Segment decision memo"],
+        ["DP-9", "Can named ABM assets be generated now?", "Pending", "No"],
+        ["DP-12", "What evidence threshold unlocks LinkedIn/community scale?", "Pending", "Saved output + interview signal"],
+        ["DP-15", "Which pricing trigger appears in launch copy?", "Default-OK", "Output saved"],
+      ],
+      callout: "Checkpoint required before generating per-channel assets.",
+    },
+  ],
+  "Pricing and packaging memo": [
+    {
+      eyebrow: "TL;DR",
+      title: "Price the repeated workbench value, not the chat surface.",
+      body:
+        "Tegy should avoid pricing around raw prompts, pages, or model usage in v1 messaging. The buyer understands the value when pricing maps to projects, source-grounded outputs, and repeat decision work.",
+    },
+    {
+      eyebrow: "1. Packaging hypothesis",
+      title: "The first package should be simple enough to test willingness to pay.",
+      table: [
+        ["Package", "Buyer job", "Included", "Risk"],
+        ["Free teaser", "Try a real lane", "One project, one generated output", "Can attract low-intent users"],
+        ["Pro", "Run repeated strategy work", "Projects, vault, outputs, decisions", "Needs clear usage limits"],
+        ["Team", "Coordinate work across matters", "Shared vault and project history", "May imply enterprise features early"],
+        ["API", "Use Tegy from local agents", "Key plus commands", "Needs governance and audit story"],
+      ],
+    },
+    {
+      eyebrow: "2. Value capture",
+      title: "The upgrade trigger should be tied to output reuse.",
+      body:
+        "A user who saves, reopens, or exports an output is closer to willingness to pay than a user who simply submits many prompts. The packaging should make the repeated project loop visible.",
+      bullets: [
+        "Upgrade after a saved output, not after a token threshold alone.",
+        "Explain limits as project and output limits, not provider-cost mechanics.",
+        "Keep the API package separate from web-app pricing until usage patterns are known.",
+      ],
+    },
+    {
+      eyebrow: "3. DP index",
+      title: "Pricing cannot be locked until the activation trigger is locked.",
+      table: [
+        ["DP", "Question", "Status"],
+        ["DP-11", "What action earns the upgrade prompt?", "Pending lock"],
+        ["DP-14", "Which limits are user-facing?", "Pending lock"],
+        ["DP-15", "Is API usage bundled or separate?", "Default-OK: separate"],
+      ],
+      callout: "Verdict: draft until upgrade-trigger policy is confirmed.",
+    },
+  ],
+  "Board memo": [
+    {
+      eyebrow: "TL;DR",
+      title: "Approve a 90-day learning launch with explicit gates.",
+      body:
+        "The board decision is not to approve every possible output or channel. It is to approve a disciplined learning system that tests whether source-grounded strategy outputs become repeatable user work product.",
+    },
+    {
+      eyebrow: "1. Decision ask",
+      title: "Approve the launch only if the gates are visible.",
+      table: [
+        ["Gate", "Decision required", "Timing", "If failed"],
+        ["Activation", "Saved or reused output threshold", "Day 30", "Revise product workflow"],
+        ["ICP", "Founder-led operator remains the first wedge", "Day 30", "Re-cut segment"],
+        ["GTM", "Named list and channel evidence", "Day 60", "Stop scaled assets"],
+        ["Resourcing", "Founder time cap realistic", "Week 4", "Descope channels"],
+      ],
+    },
+    {
+      eyebrow: "2. Risks",
+      title: "The main risks are sequence risks, not existential strategy risks.",
+      bullets: [
+        "Output breadth can hide weak activation if every new request generates a new artifact type.",
+        "Founder network can overstate market pull if cold channels lag.",
+        "Decision Log can become passive storage unless locks influence future runs.",
+      ],
+    },
+    {
+      eyebrow: "3. Recommendation",
+      title: "Ship the learning system, not a polished campaign.",
+      body:
+        "Proceed with a controlled launch that makes provenance, DP locks, and revisit triggers visible in every generated output.",
+      callout: "Board approval requested: 90-day launch with Day 30 and Day 60 gates.",
+    },
+  ],
+  "Investment thesis memo": [
+    {
+      eyebrow: "TL;DR",
+      title: "Invest only where the target tightens the strategic motion.",
+      body:
+        "The thesis should not chase adjacent market breadth. A target is attractive only if it improves the locked wedge, accelerates distribution, or closes a capability gap without forcing a new operating model.",
+    },
+    {
+      eyebrow: "1. Thesis",
+      title: "The investment case depends on a capability gap, not category excitement.",
+      table: [
+        ["Thesis pillar", "Current read", "Evidence", "Confidence"],
+        ["Market timing", "AI work needs governance and context memory", "Market notes + usage pattern", "Medium"],
+        ["Right to win", "StrategyOS lanes and DP discipline differentiate output quality", "Repo + generated examples", "Medium"],
+        ["Target logic", "Acquire capability that improves workflow or distribution", "Target universe map", "Medium-low"],
+        ["Diligence gap", "Retention and integration evidence thin", "Scorecard + source notes", "Low"],
+      ],
+    },
+    {
+      eyebrow: "2. IC questions",
+      title: "The bear case should be visible before the memo reaches ready status.",
+      bullets: [
+        "If repeat output use is weak, the thesis becomes service-heavy.",
+        "If target evidence is not comparable, the scorecard implies false precision.",
+        "If the wedge changes after acquisition, integration energy will dilute the core launch.",
+      ],
+    },
+    {
+      eyebrow: "3. Decision Points Index",
+      title: "Diligence cannot advance without these locks.",
+      table: [
+        ["DP", "Question", "Status", "Owner"],
+        ["DP-5", "Which capability gap is acquisition meant to close?", "Pending", "Founder"],
+        ["DP-8", "What minimum score allows outreach?", "Locked for current screen", "M&A lane"],
+        ["DP-13", "Is distribution or workflow capability more valuable?", "Pending", "Founder"],
+      ],
+    },
+    {
+      eyebrow: "4. Bottom line",
+      title: "Advance only targets that improve the locked motion.",
+      body:
+        "A target can be strategically interesting and still be a bad acquisition candidate. The memo should remain draft until the target-fit scorecard and Decision Log agree on pursue/pass thresholds.",
+      callout: "Verdict: draft - diligence gaps open.",
+    },
+  ],
+  "Investor FAQ": [
+    {
+      eyebrow: "TL;DR",
+      title: "Answer with evidence labels, not confidence theater.",
+      body:
+        "The FAQ should separate what is observed, what is believed, and what is currently being tested. This makes the investor conversation sharper and prevents the narrative from overstating validation.",
+    },
+    {
+      eyebrow: "1. Likely objections",
+      title: "Most investor questions reduce to repeat use, defensibility, and GTM focus.",
+      table: [
+        ["Objection", "Short answer", "Evidence needed"],
+        ["Is this just AI chat?", "No. It is project-scoped lane routing with governed outputs.", "Output reuse and DP locks"],
+        ["Where is the moat?", "Workflow rigor, source memory, and decision accumulation.", "Repeated project behavior"],
+        ["Who buys first?", "Founder-led operators with real strategic work.", "First cohort conversion"],
+        ["Why now?", "Generic AI created more output, but less governance.", "Interview evidence"],
+      ],
+    },
+    {
+      eyebrow: "2. Answer discipline",
+      title: "Use three evidence labels in every answer.",
+      bullets: [
+        "Observed: actual product behavior, source reuse, saved outputs, locked decisions.",
+        "Believed: market claims inferred from founder pattern matching or comparable products.",
+        "Testing: pricing, cold-channel response, and repeat-use thresholds.",
+      ],
+    },
+    {
+      eyebrow: "3. Follow-up loop",
+      title: "Each unanswered objection should become a source request or decision lock.",
+      body:
+        "The FAQ should not become a static answer bank. Every hard question either strengthens a source, opens a DP, or creates a revised output.",
+      callout: "Next lock: choose the three objections that must be proven before the next investor meeting.",
+    },
+  ],
+  "Investor memo": [
+    {
+      eyebrow: "TL;DR",
+      title: "Lead with the strategic decision, then show what is known versus still assumed.",
+      body:
+        "The investor memo should package the business-strategy output without pretending every open decision is closed. The goal is a credible narrative that makes the proof stack, risks, and next validation work inspectable.",
+    },
+    {
+      eyebrow: "1. Narrative spine",
+      title: "The memo should move from problem clarity to proof to use of capital.",
+      table: [
+        ["Block", "Job", "Evidence state", "Owner"],
+        ["Market timing", "Explain why now", "Medium", "Founder"],
+        ["Right to win", "Explain why Tegy", "Medium", "Founder"],
+        ["Proof stack", "Show usage and output quality", "Medium-low", "Product/GTM"],
+        ["Risks", "Name what could fail", "High clarity", "Founder"],
+        ["Use of capital", "Show what changes with funding", "Draft", "Founder"],
+      ],
+    },
+    {
+      eyebrow: "2. Evidence labels",
+      title: "Separate observed, believed, and testing claims.",
+      bullets: [
+        "Observed: source-grounded outputs, open artifact page, project-scoped context, and DP visibility.",
+        "Believed: founder-led operators will pay for repeated governed strategy work.",
+        "Testing: activation threshold, upgrade trigger, and cold-channel response.",
+      ],
+    },
+    {
+      eyebrow: "3. Bottom line",
+      title: "Use one shared spine across memo, deck, FAQ, and board discussion.",
+      body:
+        "The investor memo should not drift from the board memo or FAQ. Every claim should point back to sources, locked decisions, or explicit open DPs.",
+      callout: "Verdict: draft until DP-6 and DP-15 are resolved.",
+    },
+  ],
+  "Target-fit memo": [
+    {
+      eyebrow: "TL;DR",
+      title: "Pursue the target only if it closes the capability gap without changing the strategy.",
+      body:
+        "The target-fit lane should keep the acquisition question subordinate to the strategic matter. A target wins by tightening the chosen motion, not by being interesting on its own.",
+    },
+    {
+      eyebrow: "1. Fit criteria",
+      title: "Rank targets by strategic fit first, integration ease second.",
+      table: [
+        ["Target archetype", "Strategic fit", "Integration risk", "Call"],
+        ["Workflow data layer", "High", "Medium", "Advance"],
+        ["Vertical research library", "Medium", "Low-medium", "Hold"],
+        ["Agency services shop", "Low-medium", "High", "Pass"],
+        ["Template marketplace", "Low", "Low", "Pass"],
+      ],
+    },
+    {
+      eyebrow: "2. Diligence locks",
+      title: "Do not move to outreach until three locks are clear.",
+      bullets: [
+        "DP-8: target must map to a specific capability gap.",
+        "DP-10: integration risk must be visible in the scorecard.",
+        "DP-12: pursue/pass threshold must be agreed before reviewing more targets.",
+      ],
+    },
+    {
+      eyebrow: "3. Recommendation",
+      title: "Convert narrative fit into a comparable screen.",
+      body:
+        "The next useful output is not a longer memo. It is a scorecard with weighted criteria, source confidence, and a recommendation owner.",
+      callout: "Verdict: ready if the scorecard confirms capability, timing, and integration fit.",
+    },
+  ],
+  "Screening scorecard": [
+    {
+      eyebrow: "TL;DR",
+      title: "The scorecard should explain what to learn next.",
+      body:
+        "A high score creates a diligence question, not an automatic acquisition recommendation. A pass should name which strategic assumption failed.",
+    },
+    {
+      eyebrow: "1. Comparable screen",
+      title: "Weighted criteria expose fit, risk, and evidence quality.",
+      table: [
+        ["Target", "Fit", "Evidence quality", "Main risk", "Call"],
+        ["Workflow data layer", "High", "Medium", "Integration complexity", "Advance"],
+        ["Vertical research library", "Medium", "Medium-low", "Weak defensibility", "Hold"],
+        ["Services-enabled agency", "Low-medium", "Low", "Services drag", "Pass"],
+        ["Template marketplace", "Low", "Medium", "No durable advantage", "Pass"],
+      ],
+    },
+    {
+      eyebrow: "2. DP index",
+      title: "Scoring only matters if the threshold is locked.",
+      table: [
+        ["DP", "Question", "Status"],
+        ["DP-8", "Minimum score for outreach", "Locked"],
+        ["DP-10", "Integration-risk threshold", "Locked"],
+        ["DP-12", "Who can override the score?", "Pending"],
+      ],
+      callout: "Next lock: agree who can override a low score and why.",
+    },
+  ],
+};
+
+Object.assign(artifactSections, generatedOutputSections);
+
 const projectArtifacts = {
   "Tegy Launch": [
     ["Segment decision memo", "Memo", "Options, tradeoffs, and the call to make"],
@@ -658,12 +1269,20 @@ function syncIcons() {
 }
 
 function escapeHtml(value) {
-  return value
+  return String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function slugify(value) {
+  return String(value)
+    .toLowerCase()
+    .replaceAll("&", "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function setPage(page) {
@@ -1188,6 +1807,54 @@ function getArtifactDetail(title, project, fallbackNote = "") {
   return { meta, type, description, sections };
 }
 
+function getArtifactFrontmatterRows(title, project, detail) {
+  const generated = artifactGenerationMeta[title] || {};
+  const skills = generated.skills || [
+    "biz-mece-structure",
+    "biz-hypothesis-driven-analysis",
+    "biz-executive-comms",
+  ];
+  const dpLocks =
+    generated.dpLocks ||
+    detail.meta.decisions
+      .split(",")
+      .map((decision) => decision.trim())
+      .filter(Boolean);
+
+  return [
+    ["artifact", generated.artifact || slugify(title)],
+    ["project", slugify(project)],
+    ["round", generated.round || "1"],
+    ["agent", generated.agent || "auto-router"],
+    ["date", "2026-06-05"],
+    ["always_on_skills_applied", `[${skills.join(", ")}]`],
+    ["dp_locks_consumed", `[${dpLocks.join(", ")}]`],
+    ["status", generated.status || detail.meta.status.toLowerCase()],
+  ];
+}
+
+function renderArtifactFrontmatter(title, project, detail) {
+  const rows = getArtifactFrontmatterRows(title, project, detail);
+  const artifact = rows.find(([label]) => label === "artifact")?.[1] || slugify(title);
+  return `
+    <section class="artifact-frontmatter" aria-label="Generated output metadata">
+      <div class="artifact-file-path">output/${slugify(project)}/${artifact}.md</div>
+      <dl>
+        ${rows
+          .map(
+            ([label, value]) => `
+              <div>
+                <dt>${escapeHtml(label)}</dt>
+                <dd>${escapeHtml(value)}</dd>
+              </div>
+            `,
+          )
+          .join("")}
+      </dl>
+    </section>
+  `;
+}
+
 function renderArtifactTable(table) {
   if (!Array.isArray(table) || !table.length) return "";
   return `
@@ -1206,7 +1873,10 @@ function renderArtifactTable(table) {
 }
 
 function renderArtifactSection(section) {
-  const body = section.body ? `<p class="artifact-section-body">${escapeHtml(section.body)}</p>` : "";
+  const bodyParts = [section.body, ...(section.paragraphs || [])].filter(Boolean);
+  const body = bodyParts
+    .map((paragraph) => `<p class="artifact-section-body">${escapeHtml(paragraph)}</p>`)
+    .join("");
   const bullets = Array.isArray(section.bullets) && section.bullets.length
     ? `
       <ul class="artifact-bullets">
@@ -1254,9 +1924,9 @@ function renderArtifactDetail(title, project, fallbackNote = "") {
     .split(",")
     .map((source) => `<li>${escapeHtml(source.trim())}</li>`)
     .join("");
-  document.querySelector("#artifactDetailSections").innerHTML = detail.sections
-    .map((section) => renderArtifactSection(section))
-    .join("");
+  document.querySelector("#artifactDetailSections").innerHTML =
+    renderArtifactFrontmatter(title, resolvedProject, detail) +
+    detail.sections.map((section) => renderArtifactSection(section)).join("");
 }
 
 function openArtifact(title, project, fallbackNote = "") {
@@ -1268,15 +1938,9 @@ function openArtifact(title, project, fallbackNote = "") {
 function getArtifactMarkdown(title, project) {
   const resolvedProject = getArtifactProject(title, project);
   const detail = getArtifactDetail(title, resolvedProject);
-  const metaLines = [
-    `project: ${resolvedProject}`,
-    `type: ${detail.type}`,
-    `lane: ${detail.meta.lane}`,
-    `status: ${detail.meta.status}`,
-    `version: ${detail.meta.version}`,
-    `sources: ${detail.meta.sources}`,
-    `decision_locks: ${detail.meta.decisions}`,
-  ].join("\n");
+  const metaLines = getArtifactFrontmatterRows(title, resolvedProject, detail)
+    .map(([label, value]) => `${label}: ${value}`)
+    .join("\n");
   const body = detail.sections
     .map((section) => sectionToMarkdown(section))
     .join("\n\n");
@@ -1296,6 +1960,7 @@ function tableToMarkdown(table) {
 function sectionToMarkdown(section) {
   const parts = [`## ${section.title}`, `_${section.eyebrow}_`];
   if (section.body) parts.push(section.body);
+  if (section.paragraphs) parts.push(section.paragraphs.join("\n\n"));
   if (section.table) parts.push(tableToMarkdown(section.table));
   if (section.bullets) parts.push(section.bullets.map((item) => `- ${item}`).join("\n"));
   if (section.callout) parts.push(`> ${section.callout}`);

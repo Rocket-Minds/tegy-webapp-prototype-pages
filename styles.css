@@ -2237,6 +2237,49 @@ h2 {
   gap: 0;
 }
 
+.artifact-frontmatter {
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-soft);
+}
+
+.artifact-file-path {
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.artifact-frontmatter dl {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(0, 1fr);
+  gap: 0;
+  margin: 0;
+  padding: 18px 24px;
+}
+
+.artifact-frontmatter div:not(.artifact-file-path) {
+  display: contents;
+}
+
+.artifact-frontmatter dt,
+.artifact-frontmatter dd {
+  min-width: 0;
+  padding: 7px 0;
+  line-height: 1.45;
+}
+
+.artifact-frontmatter dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.artifact-frontmatter dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
 .artifact-doc-section {
   padding: 22px 24px;
   border-bottom: 1px solid var(--line);
@@ -2265,6 +2308,7 @@ h2 {
 
 .artifact-section-body + .artifact-mini-table,
 .artifact-section-body + .artifact-bullets,
+.artifact-section-body + .artifact-section-body,
 .artifact-mini-table + .artifact-bullets,
 .artifact-bullets + .artifact-callout,
 .artifact-mini-table + .artifact-callout,
@@ -2585,6 +2629,8 @@ h2 {
 }
 
 :root[data-theme="dark"] .artifact-document-header,
+:root[data-theme="dark"] .artifact-frontmatter,
+:root[data-theme="dark"] .artifact-file-path,
 :root[data-theme="dark"] .artifact-sidecar-block,
 :root[data-theme="dark"] .artifact-doc-section {
   border-color: var(--line);
