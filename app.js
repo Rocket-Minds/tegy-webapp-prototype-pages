@@ -2303,7 +2303,211 @@ function getLaneRun(route) {
   return laneRunTemplates[route.template || route.lane] || laneRunTemplates["Business Strategy"];
 }
 
-function renderAgentRun(run) {
+function getDecisionCheckpoint(route) {
+  if (route.template === "Investor Narrative") {
+    return {
+      label: "DP Lock - Investor package",
+      steps: [
+        {
+          title: "Investor narrative surfaced 3 claims that need owner confidence before packaging.",
+          body:
+            "Tegy is pausing before the memo becomes investor-facing so proof, caveats, and audience can be locked.",
+          options: [
+            ["Lock for board alignment", "Keep this as an internal decision memo before external outreach."],
+            ["Lock for investor outreach", "Package claims, objections, and use-of-capital for external review."],
+            ["Proceed with caveats", "Mark unsupported claims as assumptions in the output."],
+          ],
+        },
+        {
+          title: "Which proof gap should the investor memo treat as load-bearing?",
+          body:
+            "This answer changes the objection handling and the next evidence request.",
+          options: [
+            ["Market timing", "Why now, category pull, and budget urgency."],
+            ["Repeat use", "Evidence that the workflow persists after novelty."],
+            ["Right to win", "Team, distribution, or wedge advantage."],
+          ],
+        },
+      ],
+    };
+  }
+
+  if (route.lane === "Product Management") {
+    return {
+      label: "DP Lock - Product round",
+      steps: [
+        {
+          title: "Product round surfaced activation and roadmap locks before PRD work continues.",
+          body:
+            "Tegy needs the product decision path to be explicit before it generates implementation-facing output.",
+          options: [
+            ["Lock activation metric", "Use saved/reused output as the primary activation signal."],
+            ["Proceed with defaults", "Keep activation and pricing assumptions flagged as unvalidated."],
+            ["Stop after product rationale", "Do not continue into PRD or GTM packaging yet."],
+          ],
+        },
+        {
+          title: "Which product choice should downstream work inherit?",
+          body:
+            "This determines whether the next output optimizes onboarding, pricing, or roadmap sequencing.",
+          options: [
+            ["Onboarding first", "Reduce time-to-first-value before adding feature breadth."],
+            ["Pricing first", "Resolve plan shape and willingness-to-pay before roadmap expansion."],
+            ["Roadmap freeze", "Freeze new bets until the current workflow proves retention."],
+          ],
+        },
+      ],
+    };
+  }
+
+  if (route.lane === "GTM Strategy") {
+    return {
+      label: "DP Lock - GTM round",
+      steps: [
+        {
+          title: "GTM round surfaced channel, ICP, and named-list gates before execution assets.",
+          body:
+            "Tegy is pausing because GTM outputs should not ship until the motion assumptions are explicit.",
+          options: [
+            ["Lock the named list", "Founder validates the first target set before per-account assets."],
+            ["Proceed with defaults", "Run the checklist with named-list and channel caveats visible."],
+            ["Stop after checklist", "Keep this as a planning output before execution collateral."],
+          ],
+        },
+        {
+          title: "Which GTM assumption most changes the launch plan?",
+          body:
+            "This answer changes the motion, channel sequencing, and launch operating rhythm.",
+          options: [
+            ["Paid funnel data exists", "Use measured conversion and CAC inputs."],
+            ["Founder-led proof first", "Use founder network and interviews before paid scale."],
+            ["Agency can execute", "Assume external GTM capacity is available after brief lock."],
+          ],
+        },
+      ],
+    };
+  }
+
+  if (route.lane === "M&A Target Fit") {
+    return {
+      label: "DP Lock - Target-fit round",
+      steps: [
+        {
+          title: "Target-fit work surfaced pursue/pass locks before diligence continues.",
+          body:
+            "Tegy is pausing so target interest does not outrun the strategic thesis.",
+          options: [
+            ["Lock pursue threshold", "Only targets above the fit and evidence threshold move forward."],
+            ["Proceed with diligence caveats", "Keep gaps open and mark confidence by source quality."],
+            ["Stop after screen", "Use the screen as the deliverable before more diligence."],
+          ],
+        },
+        {
+          title: "Which target-fit criterion should dominate the recommendation?",
+          body:
+            "This answer changes how Tegy weighs attractive targets against the strategic matter.",
+          options: [
+            ["Capability gap", "Prioritize targets that close the declared capability gap."],
+            ["Market adjacency", "Prioritize targets that expand the current market map."],
+            ["Integration risk", "Prioritize targets that can be absorbed without motion drift."],
+          ],
+        },
+      ],
+    };
+  }
+
+  return {
+    label: "DP Lock - Round 1",
+    steps: [
+      {
+        title: "Round 1 surfaced 4 load-bearing unknowns. Lock answers before Product + GTM runs?",
+        body:
+          "Tegy is pausing before downstream lanes because these assumptions change product and GTM design.",
+        options: [
+          ["I'll answer below", "Provide funnel metrics, pricing tiers, team setup, and roadmap-freeze decision."],
+          ["Proceed with defaults - flag assumptions", "Run next rounds with pending DPs marked as unvalidated assumptions."],
+          ["Stop here - Round 1 is enough", "Keep the strategy memo as the deliverable for now."],
+        ],
+      },
+      {
+        title: "Two specific answers most change downstream GTM.",
+        body:
+          "These are the highest-leverage answers before Product + GTM waterfall work continues.",
+        options: [
+          ["We have funnel data + pricing tiers - I'll paste them", "Locks DP-2 and DP-3 with measured conversion and plan pricing."],
+          ["We do not have clean data yet - still testing", "Proceed with proxy benchmarks and confidence caveats."],
+          ["Other answer", "Capture a different founder answer before the next lane runs."],
+        ],
+      },
+    ],
+  };
+}
+
+function renderDecisionCheckpoint(route) {
+  const checkpoint = getDecisionCheckpoint(route);
+  return `
+    <section class="dp-checkpoint" data-checkpoint-step="1" aria-label="Decision checkpoint" hidden>
+      <div class="dp-checkpoint-steps">
+        ${checkpoint.steps
+          .map(
+            (step, stepIndex) => `
+              <div class="dp-checkpoint-step ${stepIndex === 0 ? "active" : ""}" data-step-panel="${stepIndex + 1}" ${stepIndex === 0 ? "" : "hidden"}>
+                <div class="dp-checkpoint-header">
+                  <span>${stepIndex + 1}/${checkpoint.steps.length}</span>
+                  <strong>${escapeHtml(step.title)}</strong>
+                  <button type="button" aria-label="Dismiss checkpoint" data-checkpoint-action="dismiss">
+                    <i data-lucide="x"></i>
+                  </button>
+                </div>
+                <p>${escapeHtml(step.body)}</p>
+                <div class="dp-option-list">
+                  ${step.options
+                    .map(
+                      ([label, detail], optionIndex) => `
+                        <button type="button" data-dp-option="${escapeHtml(label)}">
+                          <span>
+                            <strong>${escapeHtml(label)}</strong>
+                            <small>${escapeHtml(detail)}</small>
+                          </span>
+                          <kbd>${optionIndex + 1}</kbd>
+                        </button>
+                      `,
+                    )
+                    .join("")}
+                  <button type="button" data-dp-option="Other">
+                    <span>
+                      <strong>Other</strong>
+                      <small>Type a different answer or lock condition.</small>
+                    </span>
+                    <kbd>${step.options.length + 1}</kbd>
+                  </button>
+                </div>
+                <input class="dp-other-input" type="text" placeholder="Type your own answer here" aria-label="Other decision answer" />
+                <div class="dp-checkpoint-actions">
+                  ${stepIndex > 0 ? '<button type="button" data-checkpoint-action="back">Back</button>' : ""}
+                  <button type="button" data-checkpoint-action="skip">Skip</button>
+                  <button type="button" data-checkpoint-action="${stepIndex === checkpoint.steps.length - 1 ? "submit" : "next"}" disabled>
+                    ${stepIndex === checkpoint.steps.length - 1 ? "Submit" : "Next"}
+                  </button>
+                </div>
+              </div>
+            `,
+          )
+          .join("")}
+      </div>
+      <div class="dp-checkpoint-complete" hidden>
+        <div>
+          <p class="eyebrow">${escapeHtml(checkpoint.label)}</p>
+          <strong>Decision checkpoint captured.</strong>
+          <p data-checkpoint-summary>Added to Decision Log for the next lane run.</p>
+        </div>
+        <button type="button" data-checkpoint-action="open-log"><i data-lucide="shield-check"></i> Open Decision Log</button>
+      </div>
+    </section>
+  `;
+}
+
+function renderAgentRun(run, route) {
   return `
     <section class="agent-run" aria-label="Live agent run">
       <div class="agent-run-header">
@@ -2346,6 +2550,7 @@ function renderAgentRun(run) {
           <button type="button" data-run-action="lock-decision"><i data-lucide="shield-check"></i> Lock Decision</button>
         </div>
       </article>
+      ${renderDecisionCheckpoint(route)}
     </section>
   `;
 }
@@ -2353,6 +2558,7 @@ function renderAgentRun(run) {
 function animateAgentRun(card) {
   const steps = [...card.querySelectorAll(".agent-step")];
   const preview = card.querySelector(".output-preview");
+  const checkpoint = card.querySelector(".dp-checkpoint");
   steps.forEach((step, index) => {
     window.setTimeout(() => {
       steps.forEach((item, itemIndex) => {
@@ -2363,6 +2569,7 @@ function animateAgentRun(card) {
         step.classList.add("complete");
         window.setTimeout(() => {
           if (preview) preview.hidden = false;
+          if (checkpoint) checkpoint.hidden = false;
           card.querySelector(".agent-run-header small").textContent = "Ready";
           syncIcons();
         }, 420);
@@ -2418,7 +2625,7 @@ function addResponse(prompt) {
     </div>
     <p><b>Request:</b> ${escapeHtml(prompt)}</p>
     <p>${contexts.length ? `Using ${escapeHtml(contextText)}, Tegy is running the lane logic` : "With no context selected, Tegy is running the lane logic"} with ${escapeHtml(state.assistantDepth.toLowerCase())} depth and ${escapeHtml(state.assistantReasoning.toLowerCase())} reasoning, then building a decision-ready ${escapeHtml(route.output.toLowerCase())}. Routing choice: ${escapeHtml(getRoutingChoiceLabel())}.</p>
-    ${renderAgentRun(run)}
+    ${renderAgentRun(run, route)}
   `;
   stack.append(userCard, card);
   syncIcons();
@@ -2527,6 +2734,154 @@ function lockDecision(card) {
   const button = card.querySelector("button");
   if (button) button.remove();
   showToast("Decision locked");
+}
+
+function getDecisionCheckpointSelection(panel) {
+  const selected = panel.querySelector("[data-dp-option].selected");
+  const customAnswer = panel.querySelector(".dp-other-input")?.value.trim();
+  if (customAnswer) {
+    return {
+      label: customAnswer,
+      detail: "Founder answer captured from the checkpoint.",
+    };
+  }
+
+  if (!selected) return null;
+  return {
+    label: selected.querySelector("strong")?.textContent.trim() || selected.dataset.dpOption,
+    detail: selected.querySelector("small")?.textContent.trim() || "",
+  };
+}
+
+function updateDecisionCheckpointStep(panel) {
+  const primaryAction = panel.querySelector('[data-checkpoint-action="next"], [data-checkpoint-action="submit"]');
+  if (!primaryAction) return;
+  primaryAction.disabled = !getDecisionCheckpointSelection(panel);
+}
+
+function selectDecisionCheckpointOption(option) {
+  const panel = option.closest(".dp-checkpoint-step");
+  if (!panel) return;
+  panel.querySelectorAll("[data-dp-option]").forEach((button) => {
+    button.classList.toggle("selected", button === option);
+  });
+  const input = panel.querySelector(".dp-other-input");
+  if (input && option.dataset.dpOption === "Other") input.focus();
+  updateDecisionCheckpointStep(panel);
+}
+
+function setDecisionCheckpointStep(checkpoint, stepNumber) {
+  checkpoint.dataset.checkpointStep = String(stepNumber);
+  checkpoint.querySelectorAll(".dp-checkpoint-step").forEach((panel) => {
+    const active = panel.dataset.stepPanel === String(stepNumber);
+    panel.hidden = !active;
+    panel.classList.toggle("active", active);
+    if (active) updateDecisionCheckpointStep(panel);
+  });
+  syncIcons();
+}
+
+function addDecisionCheckpointToLog(card, selections, actionLabel) {
+  const decisionLog = document.querySelector("#decisionLog");
+  if (!decisionLog || card.dataset.checkpointLogged === "true") return;
+
+  const lane = card.dataset.routeLane || "StrategyOS";
+  const output = card.dataset.outputType || "Generated output";
+  const project = card.dataset.project && card.dataset.project !== "No project selected"
+    ? card.dataset.project
+    : "Unscoped";
+  const title = `${lane} between-round checkpoint`;
+  const firstAnswer = selections[0]?.label || actionLabel;
+  const secondAnswer = selections[1]?.label || "No follow-up answer captured";
+  const isDefault = `${firstAnswer} ${secondAnswer}`.toLowerCase().includes("default");
+
+  if ([...decisionLog.querySelectorAll(".decision-card strong")].some((item) => item.textContent === title)) {
+    card.dataset.checkpointLogged = "true";
+    return;
+  }
+
+  const article = document.createElement("article");
+  article.className = `decision-card ${isDefault ? "default" : "pending"}`;
+  article.innerHTML = `
+    <span>${isDefault ? "Default" : "Pending"}</span>
+    <strong>${escapeHtml(title)}</strong>
+    <p>${escapeHtml(firstAnswer)}${secondAnswer ? ` ${escapeHtml(secondAnswer)}` : ""}</p>
+    ${renderMetaList(
+      [
+        ["Role", "Owner"],
+        ["Project", project],
+        ["Trace", `${lane} -> checkpoint -> next lane`],
+        ["Consumed by", output],
+      ],
+      "decision-meta",
+    )}
+    ${isDefault ? "" : '<button class="lock-decision">Lock</button>'}
+  `;
+
+  article.querySelector(".lock-decision")?.addEventListener("click", () => lockDecision(article));
+  decisionLog.prepend(article);
+  card.dataset.checkpointLogged = "true";
+}
+
+function completeDecisionCheckpoint(checkpoint, actionLabel = "Proceed with defaults - flag assumptions") {
+  const card = checkpoint.closest(".assistant-message");
+  const selections = [...checkpoint.querySelectorAll(".dp-checkpoint-step")]
+    .map(getDecisionCheckpointSelection)
+    .filter(Boolean);
+  const summary = selections.length
+    ? selections.map((selection) => selection.label).join(" / ")
+    : actionLabel;
+
+  checkpoint.classList.add("complete");
+  checkpoint.querySelector(".dp-checkpoint-steps").hidden = true;
+  const complete = checkpoint.querySelector(".dp-checkpoint-complete");
+  complete.hidden = false;
+  const summaryNode = checkpoint.querySelector("[data-checkpoint-summary]");
+  if (summaryNode) {
+    summaryNode.textContent = `${summary}. Added to Decision Log for the next lane run.`;
+  }
+  if (card) addDecisionCheckpointToLog(card, selections, actionLabel);
+  showToast("Decision checkpoint captured");
+  syncIcons();
+}
+
+function handleDecisionCheckpointAction(button) {
+  const checkpoint = button.closest(".dp-checkpoint");
+  if (!checkpoint) return;
+
+  const action = button.dataset.checkpointAction;
+  if (action === "dismiss") {
+    checkpoint.hidden = true;
+    return;
+  }
+
+  if (action === "open-log") {
+    setPage("decisions");
+    return;
+  }
+
+  if (action === "skip") {
+    completeDecisionCheckpoint(checkpoint, "Proceed with defaults - flag assumptions");
+    return;
+  }
+
+  const currentStep = Number(checkpoint.dataset.checkpointStep || "1");
+  if (action === "back") {
+    setDecisionCheckpointStep(checkpoint, Math.max(1, currentStep - 1));
+    return;
+  }
+
+  const panel = checkpoint.querySelector(`[data-step-panel="${currentStep}"]`);
+  if (panel && !getDecisionCheckpointSelection(panel)) return;
+
+  if (action === "next") {
+    setDecisionCheckpointStep(checkpoint, currentStep + 1);
+    return;
+  }
+
+  if (action === "submit") {
+    completeDecisionCheckpoint(checkpoint);
+  }
 }
 
 function addDecisionFromRun(card) {
@@ -2915,6 +3270,18 @@ function init() {
   });
 
   document.querySelector("#conversationStack").addEventListener("click", (event) => {
+    const dpOption = event.target.closest("[data-dp-option]");
+    if (dpOption) {
+      selectDecisionCheckpointOption(dpOption);
+      return;
+    }
+
+    const checkpointButton = event.target.closest("[data-checkpoint-action]");
+    if (checkpointButton) {
+      handleDecisionCheckpointAction(checkpointButton);
+      return;
+    }
+
     const actionButton = event.target.closest("[data-run-action]");
     if (!actionButton) return;
 
@@ -2929,6 +3296,17 @@ function init() {
     if (actionButton.dataset.runAction === "lock-decision") {
       addDecisionFromRun(card);
     }
+  });
+
+  document.querySelector("#conversationStack").addEventListener("input", (event) => {
+    const input = event.target.closest(".dp-other-input");
+    if (!input) return;
+    const panel = input.closest(".dp-checkpoint-step");
+    const otherOption = panel?.querySelector('[data-dp-option="Other"]');
+    if (otherOption && input.value.trim()) {
+      selectDecisionCheckpointOption(otherOption);
+    }
+    if (panel) updateDecisionCheckpointStep(panel);
   });
 
   document.querySelectorAll(".source-chip").forEach((chip) => {
