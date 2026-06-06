@@ -1519,40 +1519,8 @@ function setAccountMenu(open) {
   menu.hidden = !open;
 }
 
-function getStoredTheme() {
-  try {
-    return window.localStorage.getItem("tegy-theme");
-  } catch {
-    return null;
-  }
-}
-
-function setStoredTheme(theme) {
-  try {
-    window.localStorage.setItem("tegy-theme", theme);
-  } catch {
-    // Ignore private browsing/storage failures.
-  }
-}
-
-function setTheme(theme) {
-  const nextTheme = theme === "dark" ? "dark" : "light";
-  const button = document.querySelector("#themeToggle");
-  document.documentElement.dataset.theme = nextTheme;
-  setStoredTheme(nextTheme);
-
-  if (button) {
-    const isDark = nextTheme === "dark";
-    button.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
-    button.innerHTML = `<i data-lucide="${isDark ? "sun" : "moon"}"></i><span>${isDark ? "Light mode" : "Dark mode"}</span>`;
-    syncIcons();
-  }
-}
-
-function getPreferredTheme() {
-  const stored = getStoredTheme();
-  if (stored === "dark" || stored === "light") return stored;
-  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+function forceDarkTheme() {
+  document.documentElement.dataset.theme = "dark";
 }
 
 function getActiveContexts() {
@@ -3262,7 +3230,7 @@ function startAssistantSession(options = {}) {
 }
 
 function init() {
-  setTheme(getPreferredTheme());
+  forceDarkTheme();
   setSidebarCollapsed(window.localStorage.getItem("tegy-sidebar-collapsed") === "true");
   setRecentsOpen(true);
   syncResponsiveNavigation();
@@ -3361,10 +3329,6 @@ function init() {
       event.stopPropagation();
       button.closest(".history-chat-row")?.classList.toggle("menu-open");
     });
-  });
-
-  document.querySelector("#themeToggle").addEventListener("click", () => {
-    setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
   });
 
   document.querySelector("#accountButton").addEventListener("click", () => {
